@@ -26,6 +26,7 @@ import BranchSubjectsPage from "./pages/BranchSubjectsPage";
 import Materials from "./pages/Materials";
 import Internship from "./pages/Internship";
 import Projects from "./pages/Projects";
+import VvimpStore from "./pages/VvimpStore";
 import Profile from "./pages/Profile";
 import StudentNotices from "./pages/StudentNotices";
 import Courses from "./pages/Courses";
@@ -137,6 +138,7 @@ const App = () => {
             <Route path="/branch/:branchName" element={<BranchSubjectsPage />} />
             <Route path="/materials" element={<Materials />} />
             <Route path="/projects" element={<Projects />} />
+            <Route path="/vvimp-store" element={<VvimpStore />} />
             <Route path="/projects/:id" element={<Projects />} />
             <Route 
               path="/profile" 

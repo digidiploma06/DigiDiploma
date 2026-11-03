@@ -285,6 +285,9 @@ const Index = () => {
               <Link to="/projects" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
                 Projects
               </Link>
+              <Link to="/vvimp-store" className="text-blue-700 hover:text-blue-800 font-semibold transition-colors">
+                VVIMP Store
+              </Link>
               <a href="/internship" target="_blank" rel="noopener noreferrer" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
                 Internship
               </a>
@@ -342,6 +345,14 @@ const Index = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <span className="relative z-10">Projects</span>
+                    <span className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                  </Link>
+                  <Link
+                    to="/vvimp-store"
+                    className="group relative px-4 py-3 text-blue-700 font-semibold transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-600 hover:shadow-sm hover:scale-[1.02] hover:pl-6"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <span className="relative z-10">VVIMP Store</span>
                     <span className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                   </Link>
                   <a
