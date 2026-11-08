@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DigiDiploma VVIMP Store</title>
+<meta name="description" content="MSBTE K-Scheme VVIMP exam guides for every branch and semester. Pick your subject and download the PDF instantly.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700;800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: slim sticky bar with search -> hero (thesis + a specimen "question paper" showing how a guide reads) -> 3-step chooser (branch, semester, subject) -> how it works + FAQ -> footer. One light blue-and-white world by choice. */
+:root{
+  color-scheme:light;
+  --paper:#FFFFFF;
+  --canvas:#F5F7FB;
+  --ink:#0C1A33;
+  --sub:#56647D;
+  --rule:#E2E7F0;
+  --blue:#1F4FE0;
+  --blue-ink:#0B2A86;
+  --blue-wash:#EDF2FE;
+  --mark:#FFD54A;
+  --ok:#0F8A5F;
+  --navy:#091629;
+  --cyan:#2DE2EE;
+  --f-display:"Schibsted Grotesk","Segoe UI",system-ui,sans-serif;
+  --f-body:"Figtree","Segoe UI",system-ui,-apple-system,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --r:14px;
+  --lift:0 1px 0 rgba(12,26,51,.04),0 12px 32px -18px rgba(12,26,51,.28);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--canvas);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit}
+button,input{font:inherit;color:inherit}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:max(16px,4vw)}
+@media (min-width:1260px){.wrap{padding-inline:24px}}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:6px}
+
+/* top bar */
+.bar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.9);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--rule)}
+.bar .wrap{display:flex;align-items:center;gap:16px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex:none}
+.logo{width:40px;height:40px;border-radius:11px;background:var(--navy);box-shadow:0 0 0 1px rgba(45,226,238,.25),0 6px 14px -8px rgba(9,22,41,.8)}
+.brand b{font-family:var(--f-display);font-weight:800;font-size:18px;letter-spacing:-.02em}
+.search{flex:1;max-width:440px;margin-left:auto;position:relative}
+.search input{width:100%;height:42px;border:1px solid var(--rule);background:var(--canvas);border-radius:11px;padding:0 14px 0 38px;font-size:14.5px;transition:border-color .15s,background .15s}
+.search input:focus{outline:none;border-color:var(--blue);background:#fff;box-shadow:0 0 0 4px var(--blue-wash)}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--sub)}
+.count{flex:none;font-family:var(--f-mono);font-size:12px;color:var(--sub);white-space:nowrap}
+@media (max-width:720px){.count{display:none}.brand b{display:none}}
+
+/* hero */
+.hero{background:var(--paper);border-bottom:1px solid var(--rule);overflow-x:clip}
+.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding-block:56px 60px}
+@media (max-width:900px){.hero .wrap{grid-template-columns:1fr;gap:32px;padding-block:36px 40px}}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:12px;color:var(--blue-ink);background:var(--blue-wash);border-radius:999px;padding:5px 11px}
+.kicker i{width:6px;height:6px;border-radius:50%;background:var(--blue)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(34px,5.2vw,58px);line-height:1.02;letter-spacing:-.035em;margin:18px 0 16px;text-wrap:balance}
+h1 mark{background:linear-gradient(transparent 58%,var(--mark) 58%,var(--mark) 92%,transparent 92%);color:inherit;padding:0 .04em}
+.lede{font-size:17.5px;color:var(--sub);max-width:46ch;margin:0}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.btn{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 20px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.btn.primary{background:var(--blue);color:#fff;box-shadow:0 10px 22px -12px rgba(31,79,224,.9)}
+.btn.primary:hover{background:var(--blue-ink)}
+.btn.ghost{background:#fff;border-color:var(--rule);color:var(--ink)}
+.btn.ghost:hover{border-color:#C9D4EA}
+.stats{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:30px;padding-top:22px;border-top:1px solid var(--rule)}
+.stats div{display:flex;flex-direction:column}
+.stats b{font-family:var(--f-display);font-weight:800;font-size:26px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stats span{font-size:13px;color:var(--sub)}
+
+/* specimen paper */
+.pwrap{position:relative;padding:10px 12px 14px 4px}
+.pwrap::before{content:"";position:absolute;inset:18px 0 0 18px;border-radius:18px;background:var(--blue-wash);transform:rotate(1.4deg)}
+.paper{position:relative;z-index:1;background:#fff;border:1px solid var(--rule);border-radius:18px;box-shadow:0 30px 60px -30px rgba(12,26,51,.35);padding:22px 22px 18px;transform:rotate(-1.2deg)}
+.p-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-bottom:2px solid var(--ink);padding-bottom:10px}
+.p-head b{font-family:var(--f-display);font-weight:800;font-size:20px;letter-spacing:-.02em}
+.p-head span{font-family:var(--f-mono);font-size:11.5px;color:var(--sub)}
+.p-sub{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--blue-ink);margin:14px 0 6px}
+.q{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:start;padding:9px 0;border-bottom:1px dashed var(--rule);font-size:14px}
+.q:last-child{border-bottom:0}
+.q em{font-style:normal;font-family:var(--f-mono);font-size:12px;color:var(--sub);padding-top:2px}
+.chip{font-family:var(--f-mono);font-weight:600;font-size:10.5px;letter-spacing:.04em;padding:3px 7px;border-radius:6px;white-space:nowrap}
+.chip.vv{background:var(--ink);color:#fff}
+.chip.imp{background:var(--blue-wash);color:var(--blue-ink)}
+.p-foot{margin-top:10px;font-size:12px;color:var(--sub)}
+
+/* chooser */
+.chooser{padding-block:44px 56px;scroll-margin-top:64px}
+.track{display:flex;gap:6px;margin-bottom:26px;flex-wrap:wrap}
+.tstep{all:unset;display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;border-radius:12px;background:transparent;border:1px solid var(--rule);font-size:14px;color:var(--sub);cursor:default}
+.tstep i{font-style:normal;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-family:var(--f-mono);font-weight:600;font-size:12px;background:var(--canvas);border:1px solid var(--rule)}
+.tstep b{font-weight:600;color:var(--ink);max-width:24ch;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tstep.on{background:#fff;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-wash)}
+.tstep.on i{background:var(--blue);border-color:var(--blue);color:#fff}
+.tstep.done{cursor:pointer;background:#fff}
+.tstep.done i{background:var(--mark);border-color:var(--mark);color:var(--ink)}
+.tstep.done:hover{border-color:#C9D4EA}
+.head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 20px;margin-bottom:22px}
+.head h2{font-family:var(--f-display);font-weight:800;font-size:clamp(24px,3.2vw,34px);letter-spacing:-.03em;margin:0;text-wrap:balance}
+.head p{margin:4px 0 0;color:var(--sub);max-width:62ch}
+.back{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--rule);background:#fff;font-weight:600;font-size:14px;cursor:pointer}
+.back:hover{border-color:#C9D4EA}
+
+.branches{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.branches{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.branches{grid-template-columns:1fr}}
+.br{all:unset;box-sizing:border-box;cursor:pointer;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:14px;background:#fff;border:1px solid var(--rule);border-radius:16px;padding:18px;transition:border-color .15s,transform .15s,box-shadow .15s}
+.br::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,var(--blue),var(--cyan));opacity:0;transition:opacity .15s}
+.br:hover{border-color:#C3D0F2;transform:translateY(-3px);box-shadow:var(--lift)}
+.br:hover::before{opacity:1}
+.br .row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.br .ic{width:48px;height:48px;border-radius:13px;background:var(--blue-wash);color:var(--blue);display:grid;place-items:center;transition:background .15s,color .15s}
+.br .ic svg{width:24px;height:24px}
+.br:hover .ic{background:var(--navy);color:var(--cyan)}
+.br .code{font-family:var(--f-mono);font-size:11.5px;font-weight:600;color:var(--sub);border:1px solid var(--rule);border-radius:6px;padding:3px 7px}
+.br b{display:block;font-family:var(--f-display);font-weight:700;font-size:18px;letter-spacing:-.015em;line-height:1.2}
+.br small{color:var(--sub);font-size:13.5px}
+.dots{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+.dots span{height:24px;border-radius:7px;display:grid;place-items:center;font-family:var(--f-mono);font-size:10.5px;font-weight:600;background:var(--canvas);color:#A3AEC2;border:1px solid var(--rule)}
+.dots span.on{background:var(--blue-wash);color:var(--blue-ink);border-color:transparent}
+.br .go{display:flex;align-items:center;justify-content:space-between;font-size:13.5px;font-weight:600;color:var(--blue);padding-top:12px;border-top:1px solid var(--rule)}
+.arrow{width:30px;height:30px;border-radius:50%;border:1px solid var(--rule);display:grid;place-items:center;color:var(--blue);transition:background .15s,color .15s,border-color .15s}
+.br:hover .arrow,.sem:hover .arrow{background:var(--blue);border-color:var(--blue);color:#fff}
+
+.year{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);margin:24px 0 10px;display:flex;align-items:center;gap:12px}
+.year::after{content:"";flex:1;height:1px;background:var(--rule)}
+.year:first-child{margin-top:0}
+.sems{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:620px){.sems{grid-template-columns:1fr}}
+.sem{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;background:#fff;border:1px solid var(--rule);border-radius:var(--r);padding:16px;transition:border-color .15s,transform .15s,box-shadow .15s}
+.sem:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:var(--lift)}
+.sem[disabled]{cursor:not-allowed;opacity:.5;transform:none;box-shadow:none;border-color:var(--rule)}
+.roman{font-family:var(--f-display);font-weight:800;font-size:30px;letter-spacing:-.03em;color:var(--blue);min-width:52px;text-align:center}
+.sem>span:nth-child(2){min-width:0}
+.sem b{display:block;font-family:var(--f-display);font-weight:700;font-size:17px}
+.peek{display:block;margin-top:6px;font-size:12.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sem small{color:var(--sub);font-size:13px}
+.rs{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--ink);background:var(--mark);padding:2px 7px;border-radius:6px;margin-left:6px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:18px}
+@media (max-width:560px){.grid{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid var(--rule);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s,border-color .15s}
+.card:hover{transform:translateY(-3px);box-shadow:var(--lift);border-color:#C9D4EA}
+.cover{display:block;aspect-ratio:16/9;background:var(--blue-wash);overflow:hidden}
+.cover img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.card:hover .cover img{transform:scale(1.03)}
+.cbody{padding:16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tag{font-family:var(--f-mono);font-size:11px;padding:3px 7px;border-radius:6px;background:var(--canvas);border:1px solid var(--rule);color:var(--sub)}
+.tag.sm{background:var(--blue-wash);border-color:transparent;color:var(--blue-ink);font-weight:600}
+.tag.common{background:#E3F4EC;border-color:transparent;color:var(--ok);font-weight:600}
+.card h3{font-family:var(--f-display);font-weight:700;font-size:17.5px;line-height:1.25;letter-spacing:-.015em;margin:2px 0 0;text-wrap:balance}
+.for{font-size:13px;color:var(--sub);margin:0}
+.cfoot{margin-top:auto;padding-top:14px;border-top:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.price{display:flex;flex-direction:column;line-height:1.1}
+.price b{font-family:var(--f-display);font-weight:800;font-size:24px;letter-spacing:-.02em}
+.price small{font-size:12px;color:var(--sub)}
+.buy{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;border-radius:11px;background:var(--blue);color:#fff;font-weight:700;font-size:14.5px;text-decoration:none;white-space:nowrap;transition:background .15s}
+.buy:hover{background:var(--blue-ink)}
+.empty{background:#fff;border:1px dashed #C9D4EA;border-radius:var(--r);padding:28px;text-align:center;color:var(--sub)}
+
+/* how + faq */
+.how{background:#fff;border-block:1px solid var(--rule)}
+.how .wrap{padding-block:52px;display:grid;grid-template-columns:.8fr 1.2fr;gap:44px}
+@media (max-width:860px){.how .wrap{grid-template-columns:1fr;gap:28px;padding-block:40px}}
+.how h2{font-family:var(--f-display);font-weight:800;font-size:clamp(24px,3vw,32px);letter-spacing:-.03em;margin:0 0 10px;text-wrap:balance}
+.how p.sub{color:var(--sub);margin:0;max-width:40ch}
+.feats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 28px}
+@media (max-width:520px){.feats{grid-template-columns:1fr}}
+.feat b{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:700;font-size:16.5px;margin-bottom:4px}
+.feat b span{font-family:var(--f-mono);font-size:11px;font-weight:600;color:var(--blue-ink);background:var(--blue-wash);border-radius:6px;padding:3px 7px}
+.feat p{margin:0;color:var(--sub);font-size:14.5px}
+.faq .wrap{padding-block:48px;max-width:820px}
+.faq h2{font-family:var(--f-display);font-weight:800;font-size:clamp(22px,2.8vw,28px);letter-spacing:-.03em;margin:0 0 14px}
+details{border-bottom:1px solid var(--rule);padding:14px 0}
+summary{cursor:pointer;font-weight:600;font-size:16px;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--f-mono);color:var(--blue);font-size:18px;line-height:1}
+details[open] summary::after{content:"−"}
+details p{margin:8px 0 0;color:var(--sub);max-width:65ch}
+footer{background:var(--navy);color:rgba(255,255,255,.72);font-size:14px}
+footer .wrap{padding-block:28px;display:flex;flex-wrap:wrap;gap:14px 30px;justify-content:space-between;align-items:center}
+footer b{color:#fff;font-family:var(--f-display);font-size:16px}
+.flogo{display:flex;align-items:center;gap:16px}
+.flogo img{width:96px;height:auto;border-radius:10px}
+footer .mono{font-family:var(--f-mono);font-size:12.5px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important}.paper,.pwrap::before{transform:none}}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#start" aria-label="DigiDiploma home"><img class="logo" src="logo-mark.png" alt="" width="40" height="40"><b>DigiDiploma</b></a>
+    <label class="search" for="q">
+      <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="2"/><path d="m14 14 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="Search subject name or code, e.g. 315319" autocomplete="off" aria-label="Search subjects">
+    </label>
+    <span class="count" id="count"></span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="kicker"><i></i>MSBTE K-Scheme · Sem I to VI</span>
+      <h1>Study the questions that <mark>actually come</mark> in your exam.</h1>
+      <p class="lede">Unit-wise VVIMP guides for every diploma branch. Each question is tagged VVIMP or IMP, so you know what to revise first.</p>
+      <div class="cta">
+        <a class="btn primary" href="#choose">Find my subject <span aria-hidden="true">→</span></a>
+        <a class="btn ghost" href="#how">What's inside</a>
+      </div>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="pwrap"><div class="paper" aria-label="Sample page from the Operating System guide">
+      <div class="p-head"><b>Operating System</b><span>315319 · Sem V</span></div>
+      <div class="p-sub"><span>Unit 02 · Process Management</span><span>4 marks</span></div>
+      <div class="q"><em>01.</em><span>Draw and explain process state diagram.</span><span class="chip vv">VVIMP</span></div>
+      <div class="q"><em>02.</em><span>Explain any two multithreading models with suitable diagram.</span><span class="chip vv">VVIMP</span></div>
+      <div class="q"><em>03.</em><span>List the types of scheduler and describe the function of each.</span><span class="chip vv">VVIMP</span></div>
+      <div class="q"><em>04.</em><span>Explain process control block with the help of neat diagram.</span><span class="chip imp">IMP</span></div>
+      <p class="p-foot">Sample rows from the guide. Every unit has 2, 4 and 6-mark sections plus a Top 10.</p>
+    </div></div>
+  </div>
+</section>
+
+<main class="chooser" id="choose">
+  <div class="wrap">
+    <nav class="track" id="track" aria-label="Progress"></nav>
+    <div id="stage" aria-live="polite"></div>
+  </div>
+</main>
+
+<section class="how" id="how">
+  <div class="wrap">
+    <div>
+      <h2>What every guide gives you</h2>
+      <p class="sub">A short, exam-focused PDF built on the K-Scheme unit structure, made for revising on your phone.</p>
+    </div>
+    <div class="feats">
+      <div class="feat"><b><span>2·4·6</span>Unit-wise questions</b><p>Questions grouped by unit and by marks, the way the paper is set.</p></div>
+      <div class="feat"><b><span>VVIMP</span>Priority tags</b><p>Every question is marked VVIMP or IMP, so you start with what matters most.</p></div>
+      <div class="feat"><b><span>TOP 10</span>Last-minute list</b><p>The ten most repeated questions on one page for the night before.</p></div>
+      <div class="feat"><b><span>PDF</span>Instant download</b><p>Pay on the secure Superprofile checkout and get the PDF right away.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="wrap">
+    <h2>Questions</h2>
+    <details><summary>How do I get the PDF after paying?</summary><p>Tap Buy Now, complete payment on the Superprofile page, and the PDF is available to download immediately. Use the same email if you need to download it again.</p></details>
+    <details><summary>How much does a guide cost?</summary><p>Odd-semester subjects (I, III, V) are ₹64. Even-semester subjects (II, IV, VI) are ₹99.</p></details>
+    <details><summary>My subject is common to many branches. Where is it?</summary><p>Common subjects such as Basic Mathematics appear under every branch they belong to, so you will find them inside your own branch.</p></details>
+    <details><summary>I can't find my subject.</summary><p>Search by the 6-digit course code at the top of the page. If it is still missing, email digidiplomahelp@gmail.com with the subject name and code.</p></details>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="flogo"><img src="logo-full.jpg" alt="DigiDiploma logo" width="96" height="78"><span>Study smart, not hard.<br>MSBTE K-Scheme VVIMP guides</span></span>
+    <span class="mono">digidiploma.in · digidiplomahelp@gmail.com</span>
+  </div>
+</footer>
+
+<script id="data" type="application/json">[{"c":"311302","s":"I","n":"Basic Mathematics","p":64,"b":"All Branches","pg":8,"u":5,"l":"https://superprofile.bio/vp/basic-mathematics--311302----vvimp-guide---msbte-k-scheme"},{"c":"311303","s":"I","n":"Communication Skills","p":64,"b":"All Branches","pg":8,"u":5,"l":"https://superprofile.bio/vp/communication-skills--311303----vvimp-guide---msbte-k-scheme"},{"c":"311305","s":"I","n":"Basic Science","p":64,"b":"Computer Engineering","pg":9,"u":6,"l":"https://superprofile.bio/vp/basic-science--311305----vvimp-guide---msbte-k-scheme"},{"c":"312301","s":"II","n":"Applied Mathematics","p":99,"b":"All Branches","pg":8,"u":5,"l":"https://superprofile.bio/vp/applied-mathematics--312301----vvimp-guide---msbte-k-scheme"},{"c":"312302","s":"II","n":"Basic Electrical and Electronics Engineering","p":99,"b":"Computer & Allied Branches","pg":9,"u":6,"l":"https://superprofile.bio/vp/basic-electrical-and-electronics-engineering--312302----vvimp---k-scheme"},{"c":"312303","s":"II","n":"Programming in C","p":99,"b":"Computer & IT Engineering","pg":11,"u":5,"l":"https://superprofile.bio/vp/programming-in-c--312303----vvimp-guide---msbte-k-scheme"},{"c":"312308","s":"II","n":"Applied Physics and Applied Chemistry","p":99,"b":"All Branches","pg":9,"u":6,"l":"https://superprofile.bio/vp/applied-physics-and-applied-chemistry--312308----vvimp---k-scheme"},{"c":"312309","s":"II","n":"Elements of Electronics","p":99,"b":"Electrical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/elements-of-electronics--312309----vvimp-guide---msbte-k-scheme"},{"c":"312310","s":"II","n":"Fundamental of Electrical Engineering","p":99,"b":"Electrical Engineering","pg":9,"u":5,"l":"https://superprofile.bio/vp/fundamental-of-electrical-engineering--312310----vvimp---k-scheme"},{"c":"312311","s":"II","n":"Engineering Drawing","p":99,"b":"Mechanical & Allied Branches","pg":9,"u":5,"l":"https://superprofile.bio/vp/engineering-drawing--312311----vvimp-guide---msbte-k-scheme"},{"c":"312312","s":"II","n":"Engineering Mechanics","p":99,"b":"Automobile Engineering","pg":13,"u":5,"l":"https://superprofile.bio/vp/engineering-mechanics--312312----vvimp-guide---msbte-k-scheme"},{"c":"312313","s":"II","n":"Manufacturing Technology","p":99,"b":"Automobile Engineering","pg":9,"u":5,"l":"https://superprofile.bio/vp/manufacturing-technology--312313----vvimp-guide---msbte-k-scheme"},{"c":"312314","s":"II","n":"Basic Electronics","p":99,"b":"Electronics & Telecommunication","pg":10,"u":5,"l":"https://superprofile.bio/vp/basic-electronics--312314----vvimp-guide---msbte-k-scheme"},{"c":"312315","s":"II","n":"Elements of Electrical Engineering","p":99,"b":"Electronics & Telecommunication","pg":12,"u":5,"l":"https://superprofile.bio/vp/elements-of-electrical-engineering--312315----vvimp-guide---msbte-k-scheme"},{"c":"312316","s":"II","n":"Electronic Materials and Components","p":99,"b":"Electronics & Telecommunication","pg":8,"u":5,"l":"https://superprofile.bio/vp/electronic-materials-and-components--312316----vvimp-guide---msbte-k-scheme"},{"c":"312338","s":"II","n":"Building Material and Construction","p":99,"b":"Civil Engineering","pg":13,"u":5,"l":"https://superprofile.bio/vp/building-material-and-construction--312338----vvimp-guide---msbte-k-scheme"},{"c":"312339","s":"II","n":"Surveying","p":99,"b":"Civil Engineering","pg":13,"u":5,"l":"https://superprofile.bio/vp/surveying--312339----vvimp-guide---msbte-k-scheme"},{"c":"313301","s":"III","n":"Data Structure Using C","p":64,"b":"Computer Engineering","pg":9,"u":6,"l":"https://superprofile.bio/vp/data-structure-using-c--313301----vvimp-guide---msbte-k-scheme"},{"c":"313302","s":"III","n":"Database Management System","p":64,"b":"Computer Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/database-management-system--313302----vvimp-guide---msbte-k-scheme"},{"c":"313303","s":"III","n":"Digital Techniques","p":64,"b":"Computer & Allied Branches","pg":null,"u":0,"l":"https://superprofile.bio/vp/digital-techniques--313303----vvimp-guide---msbte-k-scheme"},{"c":"313304","s":"III","n":"Object Oriented Programming Using C++","p":64,"b":"Computer Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/object-oriented-programming-using-c----313304----vvimp---k-scheme"},{"c":"313305","s":"III","n":"Digital Techniques and Microprocessors","p":64,"b":"Information Technology","pg":8,"u":5,"l":"https://superprofile.bio/vp/digital-techniques-and-microprocessors--313305----vvimp---k-scheme"},{"c":"313306","s":"III","n":"Data Structure using Python","p":64,"b":"Artificial Intelligence & ML","pg":9,"u":6,"l":"https://superprofile.bio/vp/data-structure-using-python--313306----vvimp-guide---msbte-k-scheme"},{"c":"313307","s":"III","n":"Statistical Modelling for Machine Learning","p":64,"b":"Artificial Intelligence & ML","pg":8,"u":5,"l":"https://superprofile.bio/vp/statistical-modelling-for-machine-learning--313307----vvimp---k-scheme"},{"c":"313308","s":"III","n":"Strength of Materials","p":64,"b":"Mechanical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/strength-of-materials--313308----vvimp-guide---msbte-k-scheme"},{"c":"313309","s":"III","n":"Fluid Mechanics and Machinery","p":64,"b":"Mechanical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/fluid-mechanics-and-machinery--313309----vvimp-guide---msbte-k-scheme"},{"c":"313310","s":"III","n":"Thermal Engineering","p":64,"b":"Mechanical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/thermal-engineering--313310----vvimp-guide---msbte-k-scheme"},{"c":"313311","s":"III","n":"Production Drawing","p":64,"b":"Mechatronics","pg":9,"u":5,"l":"https://superprofile.bio/vp/production-drawing--313311----vvimp-guide---msbte-k-scheme"},{"c":"313312","s":"III","n":"Automobile Engines","p":64,"b":"Automobile Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/automobile-engines--313312----vvimp-guide---msbte-k-scheme"},{"c":"313313","s":"III","n":"Theory of Machines","p":64,"b":"Automobile Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/theory-of-machines--313313----vvimp-guide---msbte-k-scheme"},{"c":"313314","s":"III","n":"Automobile Transmission Systems","p":64,"b":"Automobile Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/automobile-transmission-systems--313314----vvimp-guide---msbte-k-scheme"},{"c":"313316","s":"III","n":"Metrology and Measurement","p":64,"b":"Mechanical Engineering","pg":12,"u":5,"l":"https://superprofile.bio/vp/metrology-and-measurement--313316----vvimp-guide---msbte-k-scheme"},{"c":"313317","s":"III","n":"Mechanical Engineering Materials","p":64,"b":"Mechatronics","pg":8,"u":5,"l":"https://superprofile.bio/vp/mechanical-engineering-materials--313317----vvimp-guide---msbte-k-scheme"},{"c":"313318","s":"III","n":"Analog and Digital Electronics","p":64,"b":"Mechatronics","pg":8,"u":5,"l":"https://superprofile.bio/vp/analog-and-digital-electronics--313318----vvimp-guide---msbte-k-scheme"},{"c":"313319","s":"III","n":"Industrial Measurements","p":64,"b":"Mechatronics","pg":9,"u":6,"l":"https://superprofile.bio/vp/industrial-measurements--313319----vvimp-guide---msbte-k-scheme"},{"c":"313320","s":"III","n":"Elements of Electrical Engineering","p":64,"b":"Mechatronics","pg":8,"u":5,"l":"https://superprofile.bio/vp/elements-of-electrical-engineering--313320----vvimp-guide---msbte-k-scheme"},{"c":"313321","s":"III","n":"Advanced Surveying","p":64,"b":"Civil Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/advanced-surveying--313321----vvimp-guide---msbte-k-scheme"},{"c":"313322","s":"III","n":"Concrete Technology","p":64,"b":"Civil Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/concrete-technology--313322----vvimp-guide---msbte-k-scheme"},{"c":"313323","s":"III","n":"Highway Engineering","p":64,"b":"Civil Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/highway-engineering--313323----vvimp-guide---msbte-k-scheme"},{"c":"313324","s":"III","n":"Analog Electronics","p":64,"b":"Electronics Group","pg":8,"u":5,"l":"https://superprofile.bio/vp/analog-electronics--313324----vvimp-guide---msbte-k-scheme"},{"c":"313325","s":"III","n":"Circuits & Networks","p":64,"b":"Electronics Group","pg":8,"u":5,"l":"https://superprofile.bio/vp/circuits---networks--313325----vvimp-guide---msbte-k-scheme"},{"c":"313326","s":"III","n":"Principles of Electronic Communication","p":64,"b":"Electronics Group","pg":8,"u":5,"l":"https://superprofile.bio/vp/principles-of-electronic-communication--313326----vvimp---k-scheme"},{"c":"313332","s":"III","n":"Electrical Circuits and Network","p":64,"b":"Electrical Engineering","pg":10,"u":5,"l":"https://superprofile.bio/vp/electrical-circuits-and-network--313332----vvimp-guide---msbte-k-scheme"},{"c":"313333","s":"III","n":"Electrical Power Generation, Transmission and Distribution","p":64,"b":"Electrical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/electrical-power-generation--transmission-and-distribution--313333--vvimp"},{"c":"313334","s":"III","n":"Electrical and Electronic Measurement","p":64,"b":"Electrical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/electrical-and-electronic-measurement--313334----vvimp---k-scheme"},{"c":"313335","s":"III","n":"Fundamentals of Power Electronics","p":64,"b":"Electrical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/fundamentals-of-power-electronics--313335----vvimp-guide---msbte-k-scheme"},{"c":"314301","s":"IV","n":"Environmental Education and Sustainability","p":99,"b":"All Branches","pg":8,"u":5,"l":"https://superprofile.bio/vp/environmental-education-and-sustainability--314301----vvimp---k-scheme"},{"c":"314303","s":"IV","n":"Hydraulics","p":99,"b":"Civil Engineering","pg":9,"u":5,"l":"https://superprofile.bio/vp/hydraulics--314303----vvimp-guide---msbte-k-scheme"},{"c":"314312","s":"IV","n":"Railway, Bridge and Tunnel Engineering","p":99,"b":"Civil Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/railway--bridge-and-tunnel-engineering--314312----vvimp---k-scheme"},{"c":"314313","s":"IV","n":"Estimating, Costing and Valuation","p":99,"b":"Civil Engineering","pg":12,"u":5,"l":"https://superprofile.bio/vp/estimating--costing-and-valuation--314313----vvimp-guide---msbte-k-scheme"},{"c":"314314","s":"IV","n":"Water and Wastewater Engineering","p":99,"b":"Civil Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/water-and-wastewater-engineering--314314----vvimp-guide---msbte-k-scheme"},{"c":"314315","s":"IV","n":"Geotechnical Engineering","p":99,"b":"Civil Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/geotechnical-engineering--314315----vvimp-guide---msbte-k-scheme"},{"c":"314317","s":"IV","n":"Java Programming","p":99,"b":"Computer & IT Engineering","pg":11,"u":6,"l":"https://superprofile.bio/vp/java-programming--314317----vvimp-guide---msbte-k-scheme"},{"c":"314318","s":"IV","n":"Data Communication and Computer Network","p":99,"b":"Computer & IT Engineering","pg":11,"u":5,"l":"https://superprofile.bio/vp/data-communication-and-computer-network--314318----vvimp---k-scheme"},{"c":"314319","s":"IV","n":"Information Security","p":99,"b":"Information Technology","pg":12,"u":5,"l":"https://superprofile.bio/vp/information-security--314319----vvimp-guide---msbte-k-scheme"},{"c":"314320","s":"IV","n":"Mathematics for Machine Learning","p":99,"b":"Artificial Intelligence & ML","pg":8,"u":5,"l":"https://superprofile.bio/vp/mathematics-for-machine-learning--314320----vvimp-guide---msbte-k-scheme"},{"c":"314321","s":"IV","n":"Microprocessor Programming","p":99,"b":"Computer Engineering","pg":12,"u":5,"l":"https://superprofile.bio/vp/microprocessor-programming--314321----vvimp-guide---msbte-k-scheme"},{"c":"314322","s":"IV","n":"D.C. Machines and Transformers","p":99,"b":"Electrical Engineering","pg":10,"u":5,"l":"https://superprofile.bio/vp/d-c--machines-and-transformers--314322----vvimp-guide---msbte-k-scheme"},{"c":"314323","s":"IV","n":"Utilization of Electrical Energy","p":99,"b":"Electrical Engineering","pg":10,"u":5,"l":"https://superprofile.bio/vp/utilization-of-electrical-energy--314323----vvimp-guide---msbte-k-scheme"},{"c":"314324","s":"IV","n":"Digital Electronics and Microcontroller Applications","p":99,"b":"Electrical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/digital-electronics-and-microcontroller-applications--314324--vvimp"},{"c":"314325","s":"IV","n":"Electrical Estimating and Contracting","p":99,"b":"Electrical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/electrical-estimating-and-contracting--314325----vvimp---k-scheme"},{"c":"314326","s":"IV","n":"Digital Communication Systems","p":99,"b":"Electronics & Telecommunication","pg":12,"u":5,"l":"https://superprofile.bio/vp/digital-communication-systems--314326----vvimp-guide---msbte-k-scheme"},{"c":"314327","s":"IV","n":"Consumer Electronic Systems","p":99,"b":"Electronics & Telecommunication","pg":14,"u":5,"l":"https://superprofile.bio/vp/consumer-electronic-systems--314327----vvimp-guide---msbte-k-scheme"},{"c":"314328","s":"IV","n":"Microcontroller and Applications","p":99,"b":"Electronics & Telecommunication","pg":14,"u":5,"l":"https://superprofile.bio/vp/microcontroller-and-applications--314328----vvimp-guide---msbte-k-scheme"},{"c":"314337","s":"IV","n":"Control Systems","p":99,"b":"Mechatronics","pg":8,"u":5,"l":"https://superprofile.bio/vp/control-systems--314337----vvimp-guide---msbte-k-scheme"},{"c":"314338","s":"IV","n":"Embedded System using 'C'","p":99,"b":"Mechatronics","pg":8,"u":5,"l":"https://superprofile.bio/vp/embedded-system-using--c---314338----vvimp-guide---msbte-k-scheme"},{"c":"314339","s":"IV","n":"Fluid Power and Industrial Automation","p":99,"b":"Mechatronics","pg":8,"u":5,"l":"https://superprofile.bio/vp/fluid-power-and-industrial-automation--314339----vvimp---k-scheme"},{"c":"314340","s":"IV","n":"Production Processes","p":99,"b":"Mechanical Engineering","pg":10,"u":5,"l":"https://superprofile.bio/vp/production-processes--314340----vvimp-guide---msbte-k-scheme"},{"c":"314341","s":"IV","n":"Advanced Engine Technologies","p":99,"b":"Automobile Engineering","pg":12,"u":5,"l":"https://superprofile.bio/vp/advanced-engine-technologies--314341----vvimp-guide---msbte-k-scheme"},{"c":"314342","s":"IV","n":"Automobile Manufacturing Processes","p":99,"b":"Automobile Engineering","pg":12,"u":5,"l":"https://superprofile.bio/vp/automobile-manufacturing-processes--314342----vvimp-guide---msbte-k-scheme"},{"c":"314343","s":"IV","n":"Automobile Systems","p":99,"b":"Automobile Engineering","pg":13,"u":5,"l":"https://superprofile.bio/vp/automobile-systems--314343----vvimp-guide---msbte-k-scheme"},{"c":"314344","s":"IV","n":"Two and Three Wheeler Technologies","p":99,"b":"Automobile Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/two-and-three-wheeler-technologies--314344----vvimp-guide---msbte-k-scheme"},{"c":"314363","s":"IV","n":"Basic Power Electronics","p":99,"b":"Electronics & Telecommunication","pg":12,"u":5,"l":"https://superprofile.bio/vp/basic-power-electronics--314363----vvimp-guide---msbte-k-scheme"},{"c":"315301","s":"V","n":"Management","p":64,"b":"All Branches","pg":13,"u":5,"l":"https://superprofile.bio/vp/management--315301----vvimp-guide---msbte-k-scheme"},{"c":"315313","s":"V","n":"Theory of Structure","p":64,"b":"Civil Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/theory-of-structure--315313----vvimp-guide---msbte-k-scheme"},{"c":"315314","s":"V","n":"Water Resource Engineering","p":64,"b":"Civil Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/water-resource-engineering--315314----vvimp-guide---msbte-k-scheme"},{"c":"315315","s":"V","n":"Emerging Trends in Civil Engineering","p":64,"b":"Civil Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/emerging-trends-in-civil-engineering--315315----vvimp---k-scheme"},{"c":"315316","s":"V","n":"Energy Conservation & Green Building","p":64,"b":"Civil Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/energy-conservation---green-building--315316----vvimp---k-scheme"},{"c":"315317","s":"V","n":"Precast & Prestressed Concrete Structures","p":64,"b":"Civil Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/precast---prestressed-concrete-structures--315317----vvimp---k-scheme"},{"c":"315318","s":"V","n":"Road Traffic Engineering","p":64,"b":"Civil Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/road-traffic-engineering--315318----vvimp-guide---msbte-k-scheme"},{"c":"315319","s":"V","n":"Operating System","p":64,"b":"Computer Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/operating-system--315319----vvimp-guide---msbte-k-scheme"},{"c":"315321","s":"V","n":"Advance Computer Network","p":64,"b":"Computer & IT Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/advance-computer-network--315321----vvimp-guide---msbte-k-scheme"},{"c":"315323","s":"V","n":"Software Engineering","p":64,"b":"Computer Engineering","pg":9,"u":6,"l":"https://superprofile.bio/vp/software-engineering--315323----vvimp-guide---msbte-k-scheme"},{"c":"315324","s":"V","n":"Advance Database Management","p":64,"b":"Computer & Allied Branches","pg":8,"u":5,"l":"https://superprofile.bio/vp/advance-database-management--315324----vvimp-guide---msbte-k-scheme"},{"c":"315325","s":"V","n":"Cloud Computing","p":64,"b":"Computer Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/cloud-computing--315325----vvimp-guide---msbte-k-scheme"},{"c":"315326","s":"V","n":"Data Analytics","p":64,"b":"Computer & IT Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/data-analytics--315326----vvimp-guide---msbte-k-scheme"},{"c":"315327","s":"V","n":"Cloud Computing for Data Science","p":64,"b":"Artificial Intelligence & ML","pg":8,"u":5,"l":"https://superprofile.bio/vp/cloud-computing-for-data-science--315327----vvimp-guide---msbte-k-scheme"},{"c":"315329","s":"V","n":"Natural Language Processing","p":64,"b":"Artificial Intelligence & ML","pg":null,"u":0,"l":"https://superprofile.bio/vp/natural-language-processing--315329----vvimp-guide---msbte-k-scheme"},{"c":"315330","s":"V","n":"AI & ML Algorithm","p":64,"b":"Artificial Intelligence & ML","pg":8,"u":5,"l":"https://superprofile.bio/vp/ai---ml-algorithm--315330----vvimp-guide---msbte-k-scheme"},{"c":"315332","s":"V","n":"Software Engineering and Testing","p":64,"b":"Information Technology","pg":8,"u":5,"l":"https://superprofile.bio/vp/software-engineering-and-testing--315332----vvimp-guide---msbte-k-scheme"},{"c":"315333","s":"V","n":"A.C. Machines Performance","p":64,"b":"Electrical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/a-c--machines-performance--315333----vvimp-guide---msbte-k-scheme"},{"c":"315334","s":"V","n":"Switchgear and Protection","p":64,"b":"Electrical Engineering","pg":7,"u":4,"l":"https://superprofile.bio/vp/switchgear-and-protection--315334----vvimp-guide---msbte-k-scheme"},{"c":"315335","s":"V","n":"Electric Vehicle Technology","p":64,"b":"Electrical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/electric-vehicle-technology--315335----vvimp-guide---msbte-k-scheme"},{"c":"315336","s":"V","n":"Power System Operation and Control","p":64,"b":"Electrical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/power-system-operation-and-control--315336----vvimp-guide---msbte-k-scheme"},{"c":"315337","s":"V","n":"Renewable Energy Technology","p":64,"b":"Electrical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/renewable-energy-technology--315337----vvimp-guide---msbte-k-scheme"},{"c":"315338","s":"V","n":"Embedded System","p":64,"b":"Electronics Group","pg":8,"u":5,"l":"https://superprofile.bio/vp/embedded-system--315338----vvimp-guide---msbte-k-scheme"},{"c":"315339","s":"V","n":"Mobile & Wireless Communication","p":64,"b":"Electronics Group","pg":8,"u":5,"l":"https://superprofile.bio/vp/mobile---wireless-communication--315339----vvimp-guide---msbte-k-scheme"},{"c":"315340","s":"V","n":"Advance Power Electronics","p":64,"b":"Electronics & Telecommunication","pg":8,"u":5,"l":"https://superprofile.bio/vp/advance-power-electronics--315340----vvimp-guide---msbte-k-scheme"},{"c":"315341","s":"V","n":"IoT Applications","p":64,"b":"Electronics Group","pg":8,"u":5,"l":"https://superprofile.bio/vp/iot-applications--315341----vvimp-guide---msbte-k-scheme"},{"c":"315342","s":"V","n":"Microwave Engineering & Radar System","p":64,"b":"Electronics Group","pg":8,"u":5,"l":"https://superprofile.bio/vp/microwave-engineering---radar-system--315342----vvimp---k-scheme"},{"c":"315363","s":"V","n":"Emerging Trends in Mechanical Engineering","p":64,"b":"Mechanical & Allied Branches","pg":8,"u":5,"l":"https://superprofile.bio/vp/emerging-trends-in-mechanical-engineering--315363----vvimp---k-scheme"},{"c":"315364","s":"V","n":"Industrial Robotics","p":64,"b":"Mechatronics","pg":8,"u":5,"l":"https://superprofile.bio/vp/industrial-robotics--315364----vvimp-guide---msbte-k-scheme"},{"c":"315365","s":"V","n":"Mechatronics Systems using IoT","p":64,"b":"Mechatronics","pg":8,"u":5,"l":"https://superprofile.bio/vp/mechatronics-systems-using-iot--315365----vvimp-guide---msbte-k-scheme"},{"c":"315366","s":"V","n":"Process Engineering","p":64,"b":"Mechatronics","pg":8,"u":5,"l":"https://superprofile.bio/vp/process-engineering--315366----vvimp-guide---msbte-k-scheme"},{"c":"315367","s":"V","n":"Product Design and Development","p":64,"b":"Mechanical & Mechatronics","pg":8,"u":5,"l":"https://superprofile.bio/vp/product-design-and-development--315367----vvimp-guide---msbte-k-scheme"},{"c":"315371","s":"V","n":"Power Engineering","p":64,"b":"Mechanical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/power-engineering--315371----vvimp-guide---msbte-k-scheme"},{"c":"315372","s":"V","n":"Automobile Engineering","p":64,"b":"Mechanical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/automobile-engineering--315372----vvimp-guide---msbte-k-scheme"},{"c":"315373","s":"V","n":"Heating Ventilation Air Conditioning","p":64,"b":"Mechanical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/heating-ventilation-air-conditioning--315373----vvimp---k-scheme"},{"c":"315374","s":"V","n":"Power Plant Engineering","p":64,"b":"Mechanical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/power-plant-engineering--315374----vvimp-guide---msbte-k-scheme"},{"c":"315375","s":"V","n":"Transport Management and Motor Vehicle Act","p":64,"b":"Automobile Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/transport-management-and-motor-vehicle-act--315375----vvimp---k-scheme"},{"c":"315376","s":"V","n":"Advances in Automotive Technologies","p":64,"b":"Automobile Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/advances-in-automotive-technologies--315376----vvimp-guide---msbte-k-scheme"},{"c":"315377","s":"V","n":"Automobile Body Engineering and Safety","p":64,"b":"Automobile Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/automobile-body-engineering-and-safety--315377----vvimp---k-scheme"},{"c":"315378","s":"V","n":"Automobile Testing and Validation","p":64,"b":"Automobile Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/automobile-testing-and-validation--315378----vvimp-guide---msbte-k-scheme"},{"c":"315379","s":"V","n":"Motor Vehicle Insurance and Valuation","p":64,"b":"Automobile Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/motor-vehicle-insurance-and-valuation--315379----vvimp---k-scheme"},{"c":"316307","s":"VI","n":"Contracts and Billing","p":99,"b":"Civil Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/contracts-and-billing--316307----vvimp-guide---msbte-k-scheme"},{"c":"316308","s":"VI","n":"Design of RCC and Steel Structures","p":99,"b":"Civil Engineering","pg":13,"u":5,"l":"https://superprofile.bio/vp/design-of-rcc-and-steel-structures--316308----vvimp-guide---msbte-k-scheme"},{"c":"316309","s":"VI","n":"Maintenance and Repairs of Structures","p":99,"b":"Civil Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/maintenance-and-repairs-of-structures--316309----vvimp---k-scheme"},{"c":"316310","s":"VI","n":"Building Services","p":99,"b":"Civil Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/building-services--316310----vvimp-guide---msbte-k-scheme"},{"c":"316311","s":"VI","n":"Earthquake Resistant Building","p":99,"b":"Civil Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/earthquake-resistant-building--316311----vvimp-guide---msbte-k-scheme"},{"c":"316312","s":"VI","n":"Solid Waste Management","p":99,"b":"Civil Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/solid-waste-management--316312----vvimp-guide---msbte-k-scheme"},{"c":"316313","s":"VI","n":"Emerging Trends in Computer Engineering and IT","p":99,"b":"Computer & IT Engineering","pg":14,"u":5,"l":"https://superprofile.bio/vp/emerging-trends-in-computer-engineering-and-it--316313----vvimp---k-scheme"},{"c":"316314","s":"VI","n":"Software Testing","p":99,"b":"Computer Engineering","pg":10,"u":5,"l":"https://superprofile.bio/vp/software-testing--316314----vvimp-guide---msbte-k-scheme"},{"c":"316315","s":"VI","n":"Digital Forensic and Hacking Techniques","p":99,"b":"Computer & IT Engineering","pg":13,"u":5,"l":"https://superprofile.bio/vp/digital-forensic-and-hacking-techniques--316315----vvimp---k-scheme"},{"c":"316316","s":"VI","n":"Machine Learning","p":99,"b":"Computer & IT Engineering","pg":11,"u":5,"l":"https://superprofile.bio/vp/machine-learning--316316----vvimp-guide---msbte-k-scheme"},{"c":"316317","s":"VI","n":"Network and Information Security","p":99,"b":"Computer Engineering","pg":14,"u":5,"l":"https://superprofile.bio/vp/network-and-information-security--316317----vvimp-guide---msbte-k-scheme"},{"c":"316318","s":"VI","n":"Big Data Analytics","p":99,"b":"Artificial Intelligence & ML","pg":8,"u":5,"l":"https://superprofile.bio/vp/big-data-analytics--316318----vvimp-guide---msbte-k-scheme"},{"c":"316319","s":"VI","n":"Principles of Image Processing","p":99,"b":"Artificial Intelligence & ML","pg":8,"u":5,"l":"https://superprofile.bio/vp/principles-of-image-processing--316319----vvimp-guide---msbte-k-scheme"},{"c":"316320","s":"VI","n":"Advanced Algorithm in AI & ML","p":99,"b":"Artificial Intelligence & ML","pg":8,"u":5,"l":"https://superprofile.bio/vp/advanced-algorithm-in-ai---ml--316320----vvimp-guide---msbte-k-scheme"},{"c":"316321","s":"VI","n":"Data Warehousing with Mining Techniques","p":99,"b":"Information Technology","pg":13,"u":5,"l":"https://superprofile.bio/vp/data-warehousing-with-mining-techniques--316321----vvimp---k-scheme"},{"c":"316323","s":"VI","n":"Reinforcement Learning","p":99,"b":"Artificial Intelligence & ML","pg":8,"u":5,"l":"https://superprofile.bio/vp/reinforcement-learning--316323----vvimp-guide---msbte-k-scheme"},{"c":"316325","s":"VI","n":"Wireless and Mobile Network","p":99,"b":"Computer & IT Engineering","pg":13,"u":5,"l":"https://superprofile.bio/vp/wireless-and-mobile-network--316325----vvimp-guide---msbte-k-scheme"},{"c":"316326","s":"VI","n":"Emerging Trends in Electrical Engineering","p":99,"b":"Electrical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/emerging-trends-in-electrical-engineering--316326----vvimp---k-scheme"},{"c":"316327","s":"VI","n":"Energy Conservation and Audit","p":99,"b":"Electrical Engineering","pg":14,"u":5,"l":"https://superprofile.bio/vp/energy-conservation-and-audit--316327----vvimp-guide---msbte-k-scheme"},{"c":"316328","s":"VI","n":"Maintenance of Electrical Equipments","p":99,"b":"Electrical Engineering","pg":14,"u":5,"l":"https://superprofile.bio/vp/maintenance-of-electrical-equipments--316328----vvimp---k-scheme"},{"c":"316329","s":"VI","n":"Industrial Automation","p":99,"b":"Electrical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/industrial-automation--316329----vvimp-guide---msbte-k-scheme"},{"c":"316330","s":"VI","n":"Industrial Drives and Control","p":99,"b":"Electrical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/industrial-drives-and-control--316330----vvimp-guide---msbte-k-scheme"},{"c":"316331","s":"VI","n":"Power System Analysis","p":99,"b":"Electrical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/power-system-analysis--316331----vvimp-guide---msbte-k-scheme"},{"c":"316332","s":"VI","n":"Optical Network and Satellite Communication","p":99,"b":"Electronics & Telecommunication","pg":8,"u":5,"l":"https://superprofile.bio/vp/optical-network-and-satellite-communication--316332----vvimp---k-scheme"},{"c":"316334","s":"VI","n":"Automation and PLC","p":99,"b":"Electronics & Telecommunication","pg":12,"u":5,"l":"https://superprofile.bio/vp/automation-and-plc--316334----vvimp-guide---msbte-k-scheme"},{"c":"316335","s":"VI","n":"Drone Technology","p":99,"b":"Electronics & Telecommunication","pg":10,"u":5,"l":"https://superprofile.bio/vp/drone-technology--316335----vvimp-guide---msbte-k-scheme"},{"c":"316337","s":"VI","n":"Emerging Trends in Electronics","p":99,"b":"Electronics & Telecommunication","pg":8,"u":5,"l":"https://superprofile.bio/vp/emerging-trends-in-electronics--316337----vvimp-guide---msbte-k-scheme"},{"c":"316338","s":"VI","n":"Computer Network and Data Communication","p":99,"b":"Electronics & Telecommunication","pg":8,"u":5,"l":"https://superprofile.bio/vp/computer-network-and-data-communication--316338----vvimp---k-scheme"},{"c":"316340","s":"VI","n":"VLSI Applications","p":99,"b":"Electronics & Telecommunication","pg":8,"u":5,"l":"https://superprofile.bio/vp/vlsi-applications--316340----vvimp-guide---msbte-k-scheme"},{"c":"316346","s":"VI","n":"Automobile Component Design","p":99,"b":"Automobile Engineering","pg":14,"u":5,"l":"https://superprofile.bio/vp/automobile-component-design--316346----vvimp-guide---msbte-k-scheme"},{"c":"316347","s":"VI","n":"Automobile Hydraulic and Pneumatic Control Systems","p":99,"b":"Automobile Engineering","pg":9,"u":5,"l":"https://superprofile.bio/vp/automobile-hydraulic-and-pneumatic-control-systems--316347--vvimp"},{"c":"316348","s":"VI","n":"Alternative Fuels for Automobiles","p":99,"b":"Automobile Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/alternative-fuels-for-automobiles--316348----vvimp-guide---msbte-k-scheme"},{"c":"316349","s":"VI","n":"Automobile Air Conditioning","p":99,"b":"Automobile Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/automobile-air-conditioning--316349----vvimp-guide---msbte-k-scheme"},{"c":"316350","s":"VI","n":"Autotronics","p":99,"b":"Automobile Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/autotronics--316350----vvimp-guide---msbte-k-scheme"},{"c":"316351","s":"VI","n":"Automotive Mechatronics","p":99,"b":"Mechatronics","pg":8,"u":5,"l":"https://superprofile.bio/vp/automotive-mechatronics--316351----vvimp-guide---msbte-k-scheme"},{"c":"316352","s":"VI","n":"PLC Programming and SCADA","p":99,"b":"Mechatronics","pg":8,"u":5,"l":"https://superprofile.bio/vp/plc-programming-and-scada--316352----vvimp-guide---msbte-k-scheme"},{"c":"316353","s":"VI","n":"Micro-Electro Mechanical Systems","p":99,"b":"Mechatronics","pg":14,"u":5,"l":"https://superprofile.bio/vp/micro-electro-mechanical-systems--316353----vvimp-guide---msbte-k-scheme"},{"c":"316354","s":"VI","n":"Computer Aided Inspection and Quality Assurance","p":99,"b":"Mechatronics","pg":8,"u":5,"l":"https://superprofile.bio/vp/computer-aided-inspection-and-quality-assurance--316354----vvimp---k-scheme"},{"c":"316355","s":"VI","n":"Mechatronics in Health Services","p":99,"b":"Mechatronics","pg":8,"u":5,"l":"https://superprofile.bio/vp/mechatronics-in-health-services--316355----vvimp-guide---msbte-k-scheme"},{"c":"316356","s":"VI","n":"Smart Manufacturing Systems","p":99,"b":"Mechatronics","pg":8,"u":5,"l":"https://superprofile.bio/vp/smart-manufacturing-systems--316356----vvimp-guide---msbte-k-scheme"},{"c":"316357","s":"VI","n":"Design of Machine Elements","p":99,"b":"Mechanical Engineering","pg":14,"u":5,"l":"https://superprofile.bio/vp/design-of-machine-elements--316357----vvimp-guide---msbte-k-scheme"},{"c":"316359","s":"VI","n":"Computer Integrated Manufacturing Systems","p":99,"b":"Mechanical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/computer-integrated-manufacturing-systems--316359----vvimp---k-scheme"},{"c":"316362","s":"VI","n":"Industrial Engineering and Quality Control","p":99,"b":"Mechanical Engineering","pg":13,"u":5,"l":"https://superprofile.bio/vp/industrial-engineering-and-quality-control--316362----vvimp---k-scheme"},{"c":"316363","s":"VI","n":"Industrial Hydraulics and Pneumatics","p":99,"b":"Mechanical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/industrial-hydraulics-and-pneumatics--316363----vvimp---k-scheme"},{"c":"316364","s":"VI","n":"Alternative Energy Sources and Energy Management","p":99,"b":"Mechanical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/alternative-energy-sources-and-energy-management--316364----vvimp"},{"c":"316365","s":"VI","n":"Cold Chain Management","p":99,"b":"Mechanical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/cold-chain-management--316365----vvimp-guide---msbte-k-scheme"},{"c":"316373","s":"VI","n":"Solar Technology and Maintenance","p":99,"b":"Electrical Engineering","pg":8,"u":5,"l":"https://superprofile.bio/vp/solar-technology-and-maintenance--316373----vvimp-guide---msbte-k-scheme"}]</script>
+<script>
+(function(){
+  const D=JSON.parse(document.getElementById('data').textContent);
+  const SEMS=['I','II','III','IV','V','VI'];
+  const YEAR={I:'First year',II:'First year',III:'Second year',IV:'Second year',V:'Third year',VI:'Third year'};
+  const BR=[['co','CO','Computer Engineering'],['it','IF','Information Technology'],['an','AN','AI & Machine Learning'],['ee','EE','Electrical Engineering'],['ej','EJ','E&TC / Electronics'],['me','ME','Mechanical Engineering'],['mk','MK','Mechatronics'],['ae','AE','Automobile Engineering'],['ce','CE','Civil Engineering']];
+  const BN=Object.fromEntries(BR.map(b=>[b[0],b]));
+  const S='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+  const IC={co:S+'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>',
+    it:S+'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>',
+    an:S+'<path d="M12 3l1.8 4.7 4.7 1.8-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M18.5 15l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg>',
+    ee:S+'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>',
+    ej:S+'<rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg>',
+    me:S+'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>',
+    mk:S+'<path d="M3 21h9M7.5 21v-5l5.5-5.5 4 1"/><circle cx="7.5" cy="15.5" r="1.6"/><circle cx="13" cy="10.5" r="1.6"/><path d="M17 11.5l3-3M17 11.5l2.5 3"/></svg>',
+    ae:S+'<path d="M3 16v-3l2.2-5h13.6L21 13v3z"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/><path d="M3 13h18"/></svg>',
+    ce:S+'<path d="M4 21V5l8-3v19M12 9l8 3v9M2 21h20M7 8h2M7 12h2M7 16h2M15 15h2M15 18h2"/></svg>'};
+  const MAP={'All Branches':'ALL','Computer Engineering':['co'],'Computer & IT Engineering':['co','it'],'Computer & Allied Branches':['co','it','an'],'Information Technology':['it'],'Artificial Intelligence & ML':['an'],'Electrical Engineering':['ee'],'Electronics & Telecommunication':['ej'],'Electronics Group':['ej'],'Mechanical Engineering':['me'],'Mechanical & Allied Branches':['me','mk','ae'],'Mechanical & Mechatronics':['me','mk'],'Mechatronics':['mk'],'Automobile Engineering':['ae'],'Civil Engineering':['ce']};
+  D.forEach(x=>{const m=MAP[x.b];x.all=m==='ALL';x.br=x.all?BR.map(b=>b[0]):(m||[])});
+  D.sort((a,b)=>a.c.localeCompare(b.c));
+  const price=s=>['I','III','V'].includes(s)?64:99;
+  const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const arrow='<span class="arrow" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8m-3-3 3 3-3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+  const stage=document.getElementById('stage'), track=document.getElementById('track'), q=document.getElementById('q');
+  document.getElementById('count').textContent=D.length+' guides';
+  document.getElementById('stats').innerHTML=`<div><b>${D.length}</b><span>subject guides</span></div><div><b>${BR.length}</b><span>branches</span></div><div><b>₹64 / ₹99</b><span>odd / even semester</span></div>`;
+  let br=null, sem=null;
+  const go=(b,s)=>{q.value='';location.hash=b?(s?b+'-sem-'+(SEMS.indexOf(s)+1):b):'choose'};
+
+  function renderTrack(){
+    const st=[[1,br?BN[br][2]:'Choose branch'],[2,sem?'Semester '+sem:'Choose semester'],[3,'Buy your guide']];
+    const cur=!br?1:!sem?2:3;
+    track.innerHTML=st.map(([n,v])=>{const c=n===cur?'on':(n<cur?'done':'');return `<button type="button" class="tstep ${c}" data-n="${n}" ${n<cur?'':'tabindex="-1"'} ${n===cur?'aria-current="step"':''}><i>${n<cur?'✓':n}</i><b>${esc(v)}</b></button>`}).join('');
+  }
+  track.addEventListener('click',e=>{const b=e.target.closest('.tstep.done');if(!b)return;const n=+b.dataset.n;if(n===1)go(null);if(n===2)go(br)});
+
+  function stepBranch(){
+    stage.innerHTML=`<div class="head"><div><h2>Choose your branch</h2><p>Common subjects like Basic Mathematics and Communication Skills are listed inside every branch.</p></div></div>
+    <div class="branches">${BR.map(([k,code,name])=>{const n=D.filter(x=>x.br.includes(k)).length;const ss=new Set(D.filter(x=>x.br.includes(k)).map(x=>x.s));return `<button class="br" data-b="${k}"><span class="row"><span class="ic">${IC[k]}</span><span class="code">${code}</span></span><span><b>${name}</b><small>${n} subject guides</small></span><span class="dots" aria-label="Semesters available">${SEMS.map(s=>`<span class="${ss.has(s)?'on':''}">${s}</span>`).join('')}</span><span class="go">Choose semester ${arrow}</span></button>`}).join('')}</div>`;
+    stage.querySelectorAll('.br').forEach(t=>t.addEventListener('click',()=>go(t.dataset.b)));
+  }
+  function stepSem(){
+    const it=D.filter(x=>x.br.includes(br)); let html='', lastY='';
+    SEMS.forEach(s=>{const n=it.filter(x=>x.s===s).length; if(YEAR[s]!==lastY){if(lastY)html+='</div>';html+=`<p class="year">${YEAR[s]}</p><div class="sems">`;lastY=YEAR[s]}
+      html+=`<button class="sem" data-s="${s}" ${n?'':'disabled'}><span class="roman">${s}</span><span><b>Semester ${s}<span class="rs">₹${price(s)}</span></b><small>${n?n+' subject guide'+(n>1?'s':''):'Coming soon'}</small>${n?`<span class="peek">${esc(it.filter(x=>x.s===s).map(x=>x.n).join(' · '))}</span>`:''}</span>${n?arrow:''}</button>`});
+    html+='</div>';
+    stage.innerHTML=`<div class="head"><div><h2>${esc(BN[br][2])}</h2><p>${it.length} guides across six semesters. Pick your semester.</p></div><button class="back" type="button" id="back">← All branches</button></div>${html}`;
+    stage.querySelectorAll('.sem:not([disabled])').forEach(t=>t.addEventListener('click',()=>go(br,t.dataset.s)));
+    document.getElementById('back').addEventListener('click',()=>go(null));
+  }
+  const forText=x=>x.all?'All branches':(x.br.length===1?BN[x.br[0]][2]:x.br.map(k=>BN[k][1]).join(' · '));
+  const card=x=>`<article class="card"><a class="cover" href="${esc(x.l)}" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img src="covers/${x.c}.jpg" alt="" loading="lazy" width="640" height="360"></a><div class="cbody"><div class="meta"><span class="tag sm">Sem ${x.s}</span><span class="tag">${x.c}</span>${x.pg?`<span class="tag">${x.pg} pages</span>`:''}${x.all?'<span class="tag common">Common</span>':''}</div><h3>${esc(x.n)}</h3><p class="for">For ${esc(forText(x))}</p><div class="cfoot"><div class="price"><b>₹${x.p}</b><small>Instant PDF</small></div><a class="buy" href="${esc(x.l)}" target="_blank" rel="noopener" aria-label="Buy ${esc(x.n)} for ₹${x.p}">Buy now <span aria-hidden="true">→</span></a></div></div></article>`;
+  function stepSubject(){
+    const it=D.filter(x=>x.br.includes(br)&&x.s===sem);
+    stage.innerHTML=`<div class="head"><div><h2>Semester ${sem} · ${esc(BN[br][2])}</h2><p>${it.length} guide${it.length>1?'s':''} · ₹${price(sem)} each · payment and download on Superprofile</p></div><button class="back" type="button" id="back">← Change semester</button></div><div class="grid">${it.map(card).join('')}</div>`;
+    document.getElementById('back').addEventListener('click',()=>go(br));
+  }
+  function searchView(term){
+    const t=term.toLowerCase();
+    const it=D.filter(x=>x.n.toLowerCase().includes(t)||x.c.includes(t));
+    track.innerHTML='';
+    stage.innerHTML=`<div class="head"><div><h2>Results for “${esc(term)}”</h2><p>${it.length} guide${it.length===1?'':'s'} found across all branches</p></div><button class="back" type="button" id="back">Clear search</button></div>${it.length?`<div class="grid">${it.map(card).join('')}</div>`:'<div class="empty">No guide matches that name or code. Try a shorter word, or browse by branch.</div>'}`;
+    document.getElementById('back').addEventListener('click',()=>{q.value='';route()});
+  }
+  q.addEventListener('input',()=>{const v=q.value.trim(); if(v.length>=2){searchView(v)} else route()});
+  q.addEventListener('keydown',e=>{if(e.key==='Enter'){document.getElementById('choose').scrollIntoView({behavior:'smooth'})}});
+
+  function route(){
+    const h=location.hash.slice(1); const m=h.match(/^([a-z]{2})(?:-sem-([1-6]))?$/);
+    br=m&&BN[m[1]]?m[1]:null; sem=br&&m[2]?SEMS[+m[2]-1]:null;
+    if(br&&sem&&!D.some(x=>x.br.includes(br)&&x.s===sem))sem=null;
+    renderTrack(); if(!br)stepBranch(); else if(!sem)stepSem(); else stepSubject();
+    if(m)document.getElementById('choose').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+  }
+  window.addEventListener('hashchange',route);
+  route();
+})();
+</script>
+</body>
+</html>
