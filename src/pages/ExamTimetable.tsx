@@ -14,6 +14,9 @@ import {
   Monitor,
   Moon,
   Printer,
+  Search,
+  BookOpen,
+  LayoutGrid,
   Share2,
   Sun,
   Zap,
@@ -289,9 +292,13 @@ const PaperRow: React.FC<{ r: Row; now: number; today: string; showBranches: Vvi
 const ExamTimetable: React.FC = () => {
   const [params, setParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
+  const [q, setQ] = useState('');
+  const [sortBy, setSortBy] = useState<'az' | 'date'>('az');
+  const [subBranch, setSubBranch] = useState<VvimpBranchKey | 'all'>('all');
   const now = useNow();
   const today = istDay(now);
 
+  const subjectView = params.get('view') === 'subject';
   const bp = params.get('branch');
   const branch = isExamBranch(bp) ? bp : null;
   const branchRows = useMemo(() => (branch ? ROWS.filter((r) => r.branches.includes(branch)) : []), [branch]);
@@ -300,6 +307,13 @@ const ExamTimetable: React.FC = () => {
   const sem: number | 'all' | null =
     !branch ? null : sp === 'all' ? 'all' : semNum >= 1 && semNum <= 6 && branchRows.some((r) => r.sem === semNum) ? semNum : null;
   const step: 1 | 2 | 3 = !branch ? 1 : sem === null ? 2 : 3;
+  const term = q.trim().toLowerCase();
+  const subjRows = useMemo(() => {
+    const list = ROWS.filter(
+      (r) => (subBranch === 'all' || r.branches.includes(subBranch)) && (!term || r.name.toLowerCase().includes(term) || r.code.includes(term)),
+    );
+    return sortBy === 'az' ? [...list].sort((a, b) => a.name.localeCompare(b.name)) : list;
+  }, [term, subBranch, sortBy]);
   const rows = useMemo(() => (sem === 'all' ? branchRows : branchRows.filter((r) => r.sem === sem)), [branchRows, sem]);
   const semLabel = sem === 'all' ? 'All semesters' : sem ? `Semester ${ROMAN[sem - 1]}` : undefined;
   const planTitle = branch && semLabel ? `${branchName(branch)} · ${semLabel}` : '';
@@ -309,9 +323,10 @@ const ExamTimetable: React.FC = () => {
     document.title = 'Winter 2026 Exam Timetable + VVIMP | DigiDiploma';
   }, []);
   useEffect(() => {
-    if (step > 1) document.getElementById('tt-stage')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [step, branch, sem]);
+    if (step > 1 || subjectView) document.getElementById('tt-stage')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [step, branch, sem, subjectView]);
 
+  const showSubjects = (on: boolean) => setParams(on ? new URLSearchParams({ view: 'subject' }) : new URLSearchParams());
   const go = (b: VvimpBranchKey | null, s?: number | 'all' | null) => {
     const next = new URLSearchParams();
     if (b) next.set('branch', b);
@@ -425,6 +440,140 @@ const ExamTimetable: React.FC = () => {
         </section>
 
         <main id="tt-stage" className="mx-auto max-w-[1160px] scroll-mt-20 px-4 pb-14 pt-11 sm:px-6" aria-live="polite">
+          <div className="mb-7 inline-flex rounded-[13px] border border-[#E2E7F0] bg-white p-1" role="tablist" aria-label="Timetable view">
+            {[
+              [false, 'By branch & semester', LayoutGrid],
+              [true, 'By subject', BookOpen],
+            ].map(([on, label, Icon]) => {
+              const I = Icon as LucideIcon;
+              const active = subjectView === on;
+              return (
+                <button
+                  key={label as string}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => showSubjects(on as boolean)}
+                  className={`inline-flex h-10 items-center gap-2 rounded-[10px] border-0 px-3.5 text-sm font-semibold transition-colors ${active ? 'bg-[#091629] text-white hover:bg-[#091629]' : 'bg-transparent text-[#56647D] hover:bg-[#F5F7FB] hover:text-[#0C1A33]'}`}
+                >
+                  <I className="h-4 w-4" /> {label as string}
+                </button>
+              );
+            })}
+          </div>
+
+          {subjectView ? (
+            <section aria-labelledby="tt-hs">
+              <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <h2 id="tt-hs" className="m-0 text-[clamp(24px,3.2vw,34px)] font-extrabold tracking-[-0.03em]" style={F_DISPLAY}>Timetable by subject</h2>
+                  <p className="mt-1 max-w-[62ch] text-[#56647D]">Search any subject name or 6-digit code to see when its paper is.</p>
+                </div>
+                <GhostBtn onClick={() => window.print()}>
+                  <Printer className="h-4 w-4" /> Print / Save PDF
+                </GhostBtn>
+              </div>
+              <div className="flex flex-wrap items-center gap-2.5">
+                <label className="relative w-full max-w-[440px]">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#56647D]" />
+                  <input
+                    type="search"
+                    value={q}
+                    onChange={(e) => setQ(e.target.value)}
+                    placeholder="Subject name or code, e.g. 315319"
+                    aria-label="Search subjects"
+                    autoComplete="off"
+                    className="h-[44px] w-full rounded-[11px] border border-[#E2E7F0] bg-white pl-[38px] pr-3.5 text-[14.5px] focus:border-[#1F4FE0] focus:outline-none focus:ring-4 focus:ring-[#EDF2FE]"
+                  />
+                </label>
+                <div className="inline-flex rounded-[11px] border border-[#E2E7F0] bg-white p-1 text-sm" role="group" aria-label="Sort">
+                  {(['az', 'date'] as const).map((k) => (
+                    <button
+                      key={k}
+                      type="button"
+                      aria-pressed={sortBy === k}
+                      onClick={() => setSortBy(k)}
+                      className={`h-9 rounded-lg border-0 px-3 font-semibold ${sortBy === k ? 'bg-[#EDF2FE] text-[#0B2A86] hover:bg-[#EDF2FE]' : 'bg-transparent text-[#56647D] hover:bg-[#F5F7FB]'}`}
+                    >
+                      {k === 'az' ? 'A – Z' : 'By date'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]">
+                {(['all', ...EXAM_BRANCH_KEYS] as const).map((k) => (
+                  <button
+                    key={k}
+                    type="button"
+                    aria-pressed={subBranch === k}
+                    onClick={() => setSubBranch(k)}
+                    className={`h-9 shrink-0 rounded-full border border-solid px-3.5 text-[13.5px] font-semibold ${subBranch === k ? 'border-[#0C1A33] bg-[#0C1A33] text-white hover:bg-[#0C1A33]' : 'border-[#E2E7F0] bg-white text-[#0C1A33] hover:border-[#C9D4EA] hover:bg-white'}`}
+                  >
+                    {k === 'all' ? 'All branches' : branchCode(k)}
+                  </button>
+                ))}
+              </div>
+              <p className="mb-3 mt-4 text-sm text-[#56647D]">
+                {subjRows.length} subject{subjRows.length === 1 ? '' : 's'}
+                {subBranch !== 'all' ? ` · ${branchName(subBranch)}` : ''}
+              </p>
+              {subjRows.length ? (
+                <div className="overflow-hidden rounded-2xl border border-[#E2E7F0] bg-white">
+                  <div className="hidden grid-cols-[1.6fr_1fr_.9fr_auto] gap-4 border-b border-[#E2E7F0] bg-[#F5F7FB] px-[18px] py-2.5 text-[11px] uppercase tracking-[.06em] text-[#56647D] md:grid" style={F_MONO}>
+                    <span>Subject</span>
+                    <span>Exam date</span>
+                    <span>Time</span>
+                    <span className="w-[132px] text-right">VVIMP guide</span>
+                  </div>
+                  {subjRows.map((r) => {
+                    const isDone = endOf(r) <= now;
+                    const d = daysBetween(today, r.date);
+                    const when = isDone ? 'Done' : startOf(r) <= now ? 'Now' : d === 0 ? 'Today' : d === 1 ? 'Tomorrow' : `In ${d} days`;
+                    const tone = isDone ? 'bg-[#E3F4EC] text-[#0F8A5F]' : d <= 1 ? 'bg-[#FFD54A] text-[#0C1A33]' : d <= 4 ? 'bg-[#FFF3D1] text-[#7A5A00]' : 'bg-[#F5F7FB] text-[#56647D]';
+                    const brs = subBranch === 'all' ? r.branches : [subBranch];
+                    return (
+                      <div key={r.code} className={`grid grid-cols-[1fr_auto] gap-x-4 gap-y-2 border-b border-[#E2E7F0] px-[18px] py-3.5 last:border-b-0 md:grid-cols-[1.6fr_1fr_.9fr_auto] md:items-center ${isDone ? 'opacity-60' : ''}`}>
+                        <div className="col-span-2 min-w-0 md:col-span-1">
+                          <b className="block text-[16px] font-bold leading-[1.25] tracking-[-0.01em]" style={F_DISPLAY}>{r.name}</b>
+                          <span className="text-[12.5px] text-[#56647D]">
+                            <span style={F_MONO}>{r.code}</span> · {brs.map((b) => `${branchCode(b)}-${ROMAN[r.sem - 1]}`).join(', ')}
+                          </span>
+                        </div>
+                        <div>
+                          <b className="block text-[15px] font-semibold">{fmtDate(r.date, { weekday: 'short', day: 'numeric', month: 'short' })}</b>
+                          <span className="text-[12px] text-[#56647D]" style={F_MONO}>
+                            Day {r.day} · <span className={`rounded px-1.5 py-px font-semibold ${tone}`}>{when}</span>
+                          </span>
+                        </div>
+                        <div className="text-[13.5px] text-[#0C1A33] md:text-[14px]">
+                          <span className="inline-flex items-center gap-1.5">
+                            {r.session === 'M' ? <Sun className="h-3.5 w-3.5 text-[#B07A00]" /> : <Moon className="h-3.5 w-3.5 text-[#1F4FE0]" />}
+                            {slot(r)}
+                          </span>
+                        </div>
+                        <div className="col-span-2 md:col-span-1 md:w-[150px] md:text-right">
+                          {r.url ? (
+                            <a href={r.url} target="_blank" rel="noopener noreferrer" className="inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-[10px] bg-[#1F4FE0] px-3.5 text-[13.5px] font-bold text-white hover:bg-[#0B2A86]">
+                              Get VVIMP · ₹{r.price}
+                            </a>
+                          ) : (
+                            <a href={`https://wa.me/91${HELP_WA}?text=${encodeURIComponent(`Hi, I need the VVIMP guide for ${r.name} (${r.code}).`)}`} target="_blank" rel="noopener noreferrer" className="inline-flex h-9 items-center whitespace-nowrap rounded-[10px] border border-solid border-[#E2E7F0] bg-white px-3.5 text-[13.5px] font-bold text-[#0C1A33]">
+                              Ask on WhatsApp
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="rounded-[14px] border border-dashed border-[#C9D4EA] bg-white p-7 text-center text-[#56647D]">
+                  No paper matches that name or code in this timetable. Try a shorter word.
+                </div>
+              )}
+            </section>
+          ) : (
+          <>
           <Track current={step} branch={branch ? branchName(branch) : undefined} sem={semLabel} onStep={(n) => (n === 1 ? go(null) : go(branch))} />
 
           {step === 1 && (
@@ -569,6 +718,8 @@ const ExamTimetable: React.FC = () => {
               </div>
             </section>
           )}
+          </>
+          )}
         </main>
 
         <section className="border-t border-[#E2E7F0] bg-white">
@@ -598,14 +749,14 @@ const ExamTimetable: React.FC = () => {
       </div>
 
       {/* Print / PDF view */}
-      {step === 3 && branch && (
+      {((step === 3 && branch) || subjectView) && (
         <div className="hidden bg-white text-[#0C1A33] print:block">
           <div className="flex items-center justify-between border-b-2 border-[#0C1A33] pb-3">
             <div className="flex items-center gap-3">
               <img src={LOGO_MARK} alt="" width={44} height={44} className="h-11 w-11 rounded-[10px] bg-[#091629]" />
               <div>
                 <b className="block text-xl font-extrabold tracking-[-0.02em]" style={F_DISPLAY}>Winter 2026 exam timetable</b>
-                <span className="text-sm text-[#56647D]">{planTitle} · MSBTE K-Scheme</span>
+                <span className="text-sm text-[#56647D]">{subjectView ? `By subject${subBranch !== 'all' ? ` · ${branchName(subBranch)}` : ' · All branches'}` : planTitle} · MSBTE K-Scheme</span>
               </div>
             </div>
             <span className="text-xs text-[#56647D]" style={F_MONO}>digidiploma.in/exam-timetable</span>
@@ -622,7 +773,7 @@ const ExamTimetable: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => (
+              {(subjectView ? subjRows : rows).map((r) => (
                 <tr key={r.code} className="break-inside-avoid align-top">
                   <td className="border-b border-[#E2E7F0] py-2 pr-2" style={F_MONO}>{r.day}</td>
                   <td className="whitespace-nowrap border-b border-[#E2E7F0] py-2 pr-2 font-semibold">{fmtDate(r.date, { weekday: 'short', day: 'numeric', month: 'short' })}</td>
@@ -630,7 +781,9 @@ const ExamTimetable: React.FC = () => {
                   <td className="border-b border-[#E2E7F0] py-2 pr-2" style={F_MONO}>{r.code}</td>
                   <td className="border-b border-[#E2E7F0] py-2 pr-2 font-semibold">
                     {r.name}
-                    {sem === 'all' ? <span className="font-normal text-[#56647D]"> · Sem {ROMAN[r.sem - 1]}</span> : null}
+                    {sem === 'all' || subjectView ? (
+                      <span className="font-normal text-[#56647D]"> · {(subjectView && subBranch === 'all' ? r.branches : [subBranch === 'all' ? branch! : subBranch]).map((b) => `${branchCode(b)}-${ROMAN[r.sem - 1]}`).join(', ')}</span>
+                    ) : null}
                   </td>
                   <td className="whitespace-nowrap border-b border-[#E2E7F0] py-2">{r.url ? `₹${r.price} · digidiploma.in` : 'Coming soon'}</td>
                 </tr>
