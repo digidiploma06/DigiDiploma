@@ -510,7 +510,9 @@ const ExamTimetable: React.FC = () => {
                           </span>
                         </b>
                         <small className="text-[13px] text-[#56647D]">
-                          {fmtDate(list[0].date, { day: 'numeric', month: 'short' })} – {fmtDate(list[list.length - 1].date, { day: 'numeric', month: 'short' })}
+                          {list[0].date === list[list.length - 1].date
+                            ? fmtDate(list[0].date, { day: 'numeric', month: 'short' })
+                            : `${fmtDate(list[0].date, { day: 'numeric', month: 'short' })} – ${fmtDate(list[list.length - 1].date, { day: 'numeric', month: 'short' })}`}
                         </small>
                         <span className="mt-1.5 block truncate text-[12.5px] text-[#56647D]">{list.map((r) => r.name).join(' · ')}</span>
                       </span>
