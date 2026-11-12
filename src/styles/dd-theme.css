@@ -1,0 +1,373 @@
+/* DigiDiploma 2026 redesign — scoped to .dd so dashboard/admin pages are untouched */
+
+:root {
+  --dd-ink: #0b0b14;
+  --dd-ink-2: #11111c;
+  --dd-surface: #161624;
+  --dd-line: rgba(255, 255, 255, 0.09);
+  --dd-text: #f3f2ee;
+  --dd-mute: #a4a3b5;
+  --dd-violet: #7c5cff;
+  --dd-violet-2: #a892ff;
+  --dd-lime: #c6ff3d;
+  --dd-pink: #ff5fa2;
+}
+
+.dd {
+  background: var(--dd-ink);
+  color: var(--dd-text);
+  font-family: "Figtree", "Inter", system-ui, sans-serif;
+  min-height: 100vh;
+  overflow-x: clip;
+  position: relative;
+}
+
+.dd ::selection {
+  background: var(--dd-lime);
+  color: var(--dd-ink);
+}
+
+.dd-display {
+  font-family: "Schibsted Grotesk", "Figtree", system-ui, sans-serif;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+  font-weight: 800;
+}
+
+.dd-mono {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  letter-spacing: 0.04em;
+}
+
+.dd-eyebrow {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dd-lime);
+}
+
+.dd-grad-text {
+  background: linear-gradient(100deg, var(--dd-violet-2) 0%, var(--dd-lime) 60%, #ffffff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ---------- Backgrounds ---------- */
+
+.dd-grid-bg {
+  background-image:
+    linear-gradient(var(--dd-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--dd-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 30%, transparent 75%);
+}
+
+.dd-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.55;
+  will-change: transform;
+}
+
+.dd-blob-a {
+  width: 520px;
+  height: 520px;
+  background: var(--dd-violet);
+  top: -140px;
+  left: -120px;
+  animation: dd-drift-a 18s ease-in-out infinite alternate;
+}
+
+.dd-blob-b {
+  width: 420px;
+  height: 420px;
+  background: var(--dd-lime);
+  opacity: 0.22;
+  top: 20%;
+  right: -120px;
+  animation: dd-drift-b 22s ease-in-out infinite alternate;
+}
+
+.dd-blob-c {
+  width: 380px;
+  height: 380px;
+  background: var(--dd-pink);
+  opacity: 0.25;
+  bottom: -160px;
+  left: 35%;
+  animation: dd-drift-a 26s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes dd-drift-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(120px, 80px, 0) scale(1.2); }
+}
+
+@keyframes dd-drift-b {
+  from { transform: translate3d(0, 0, 0) scale(1.1); }
+  to { transform: translate3d(-140px, 100px, 0) scale(0.9); }
+}
+
+.dd-noise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ---------- Surfaces ---------- */
+
+.dd-card {
+  position: relative;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+  border: 1px solid var(--dd-line);
+  border-radius: 24px;
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+
+/* cursor spotlight, driven by --mx / --my set in Tilt */
+.dd-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(124, 92, 255, 0.28), transparent 60%);
+}
+
+.dd-card:hover::before {
+  opacity: 1;
+}
+
+.dd-card:hover {
+  border-color: rgba(198, 255, 61, 0.35);
+}
+
+.dd-glass {
+  background: rgba(17, 17, 28, 0.72);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid var(--dd-line);
+}
+
+/* ---------- Buttons ---------- */
+
+/* The app's global stylesheet paints every <button> indigo; undo that inside the redesign */
+.dd button:not(.dd-btn) {
+  background: transparent;
+  box-shadow: none;
+}
+
+.dd-btn {
+  background: transparent;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  height: 3.5rem;
+  padding: 0 1.75rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 1rem;
+  white-space: nowrap;
+  transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dd-btn:active {
+  transform: scale(0.97);
+}
+
+.dd-btn-lime {
+  background: var(--dd-lime);
+  color: var(--dd-ink);
+  box-shadow: 0 0 0 0 rgba(198, 255, 61, 0.5);
+}
+
+.dd-btn-lime:hover {
+  box-shadow: 0 0 44px -6px rgba(198, 255, 61, 0.7);
+}
+
+.dd-btn-violet {
+  background: var(--dd-violet);
+  color: #fff;
+}
+
+.dd-btn-violet:hover {
+  box-shadow: 0 0 44px -6px rgba(124, 92, 255, 0.9);
+}
+
+.dd-btn-ghost {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--dd-text);
+}
+
+.dd-btn-ghost:hover {
+  border-color: var(--dd-lime);
+  color: var(--dd-lime);
+}
+
+.dd-btn-outline {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+
+.dd-btn-outline:hover {
+  background: #fff;
+  color: var(--dd-ink);
+}
+
+.dd-btn-sm {
+  height: 2.6rem;
+  padding: 0 1.1rem;
+  font-size: 0.875rem;
+}
+
+/* ---------- Nav ---------- */
+
+.dd-navlink {
+  position: relative;
+  color: var(--dd-mute);
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+.dd-navlink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  background: var(--dd-lime);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dd-navlink:hover,
+.dd-navlink[aria-current="page"] {
+  color: var(--dd-text);
+}
+
+.dd-navlink:hover::after,
+.dd-navlink[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+/* ---------- Marquee ---------- */
+
+.dd-marquee {
+  display: flex;
+  overflow: hidden;
+  user-select: none;
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.dd-marquee-track {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 3rem;
+  padding-right: 3rem;
+  min-width: 100%;
+  animation: dd-marquee var(--dd-marquee-speed, 32s) linear infinite;
+}
+
+.dd-marquee:hover .dd-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes dd-marquee {
+  to { transform: translateX(-100%); }
+}
+
+/* ---------- Floating hero cards ---------- */
+
+.dd-float {
+  animation: dd-float 7s ease-in-out infinite;
+}
+
+.dd-float-slow {
+  animation: dd-float 10s ease-in-out infinite reverse;
+}
+
+@keyframes dd-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-16px); }
+}
+
+.dd-scroll-cue {
+  animation: dd-cue 1.8s ease-in-out infinite;
+}
+
+@keyframes dd-cue {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(8px); opacity: 0.4; }
+}
+
+/* ---------- Accordion (shadcn) inside .dd ---------- */
+
+.dd .dd-faq-item {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--dd-line);
+  border-radius: 18px;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.dd .dd-faq-item[data-state="open"] {
+  border-color: rgba(198, 255, 61, 0.4);
+  background: rgba(124, 92, 255, 0.08);
+}
+
+/* ---------- Lite mode: low-end phones and reduced motion ---------- */
+
+.dd-lite .dd-blob,
+.dd-lite .dd-float,
+.dd-lite .dd-float-slow,
+.dd-lite .dd-scroll-cue {
+  animation: none;
+}
+
+.dd-lite .dd-blob {
+  filter: blur(70px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dd-blob,
+  .dd-float,
+  .dd-float-slow,
+  .dd-scroll-cue,
+  .dd-marquee-track {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .dd-blob-a { width: 320px; height: 320px; }
+  .dd-blob-b { width: 260px; height: 260px; }
+  .dd-blob-c { display: none; }
+  .dd-grid-bg { background-size: 44px 44px; }
+}
+
+/* Swipeable card row on phones */
+.dd-snap-row {
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dd-snap-row::-webkit-scrollbar {
+  display: none;
+}

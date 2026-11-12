@@ -101,7 +101,7 @@ const PWAInstallPrompt: React.FC = () => {
   if (isIOS && !isInStandaloneMode) {
     return (
       <div className="fixed bottom-4 left-4 right-4 z-50 max-w-sm mx-auto">
-        <Card className="border-primary/20 bg-primary/5">
+        <Card className="border-primary/20 bg-card shadow-xl">
           <CardContent className="p-4">
             <div className="flex items-start gap-3">
               <Smartphone className="w-5 h-5 text-primary mt-0.5" />
@@ -139,7 +139,7 @@ const PWAInstallPrompt: React.FC = () => {
   // Standard PWA install prompt
   return (
     <div className="fixed bottom-4 left-4 right-4 z-50 max-w-sm mx-auto">
-      <Card className="border-primary/20 bg-primary/5">
+      <Card className="border-primary/20 bg-card shadow-xl">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
             <Monitor className="w-5 h-5 text-primary mt-0.5" />
