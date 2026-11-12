@@ -22,8 +22,25 @@ import {
   Zap,
   type LucideIcon,
 } from 'lucide-react';
-import { VVIMP_BRANCHES, VVIMP_PRODUCTS, VvimpBranchKey } from '@/data/vvimpProducts';
-import { EXAM_BRANCH_KEYS, EXAM_PAPERS, EXAM_PENDING_GUIDES, ExamPaper } from '@/data/examTimetableW26';
+import { VvimpBranchKey } from '@/data/vvimpProducts';
+import { EXAM_BRANCH_KEYS } from '@/data/examTimetableW26';
+import {
+  ROWS,
+  Row,
+  startOf,
+  endOf,
+  fmtDate,
+  fmtHM,
+  slot,
+  istDay,
+  daysBetween,
+  branchName,
+  branchCode,
+  isExamBranch,
+  FIRST,
+  LAST,
+  EXAM_DAYS,
+} from '@/lib/examTimetable';
 
 /* Same visual system as /vvimp-store: white storefront, deep-navy ink, royal blue,
    logo navy + cyan for brand moments. Schibsted Grotesk / Figtree / JetBrains Mono. */
@@ -45,34 +62,6 @@ const BRANCH_ICON: Partial<Record<VvimpBranchKey, LucideIcon>> = {
   ae: Car,
   ce: Building2,
 };
-
-type Row = ExamPaper & { name: string; sem: number; price: number; url: string | null };
-const PRODUCT = new Map(VVIMP_PRODUCTS.map((p) => [p.code, p]));
-const ROWS: Row[] = EXAM_PAPERS.map((e) => {
-  const p = PRODUCT.get(e.code)!;
-  return { ...e, name: p.name, sem: p.semester, price: p.price, url: EXAM_PENDING_GUIDES.has(e.code) ? null : p.url };
-}).sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start));
-
-const at = (date: string, hm: string) => new Date(`${date}T${hm}:00+05:30`).getTime();
-const startOf = (r: Row) => at(r.date, r.start);
-const endOf = (r: Row) => at(r.date, r.end);
-const dateObj = (d: string) => new Date(`${d}T12:00:00+05:30`);
-const fmtDate = (d: string, o: Intl.DateTimeFormatOptions) => dateObj(d).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', ...o });
-const fmtHM = (hm: string) => {
-  const [h, m] = hm.split(':').map(Number);
-  return `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`;
-};
-const slot = (r: Row) => `${fmtHM(r.start)} – ${fmtHM(r.end)}`;
-const istDay = (t: number) => new Date(t).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
-const daysBetween = (from: string, to: string) => Math.round((dateObj(to).getTime() - dateObj(from).getTime()) / 864e5);
-
-const branchName = (k: VvimpBranchKey) => VVIMP_BRANCHES.find((b) => b.key === k)?.name ?? k.toUpperCase();
-const branchCode = (k: VvimpBranchKey) => VVIMP_BRANCHES.find((b) => b.key === k)?.code ?? k.toUpperCase();
-const isExamBranch = (v: string | null): v is VvimpBranchKey => !!v && (EXAM_BRANCH_KEYS as string[]).includes(v);
-
-const FIRST = ROWS[0].date;
-const LAST = ROWS[ROWS.length - 1].date;
-const EXAM_DAYS = new Set(ROWS.map((r) => r.date)).size;
 
 function useNow(ms = 1000) {
   const [now, setNow] = useState(() => Date.now());

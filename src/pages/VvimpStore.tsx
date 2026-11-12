@@ -24,6 +24,7 @@ import {
   productsForBranch,
   vvimpPriceForSemester,
 } from '@/data/vvimpProducts';
+import StoreExamTimetable from '@/components/StoreExamTimetable';
 
 /* Design: white storefront, deep-navy ink and royal blue, with the logo's navy + cyan
    used for brand moments. Display: Schibsted Grotesk; body: Figtree; codes: JetBrains Mono. */
@@ -269,6 +270,7 @@ const VvimpStore: React.FC = () => {
             <Link to="/" className="rounded-lg px-2.5 py-1.5 text-[#56647D] hover:bg-[#F5F7FB] hover:text-[#0C1A33]">Home</Link>
             <Link to="/materials" className="rounded-lg px-2.5 py-1.5 text-[#56647D] hover:bg-[#F5F7FB] hover:text-[#0C1A33]">Materials</Link>
             <Link to="/projects" className="rounded-lg px-2.5 py-1.5 text-[#56647D] hover:bg-[#F5F7FB] hover:text-[#0C1A33]">Projects</Link>
+            <Link to="/exam-timetable" className="rounded-lg px-2.5 py-1.5 text-[#56647D] hover:bg-[#F5F7FB] hover:text-[#0C1A33]">Exam Timetable</Link>
           </nav>
           <label htmlFor="vvimp-q" className="relative ml-auto w-full max-w-[440px]">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#56647D]" />
@@ -287,6 +289,9 @@ const VvimpStore: React.FC = () => {
           <span className="hidden shrink-0 text-xs text-[#56647D] md:block" style={F_MONO}>{VVIMP_PRODUCTS.length} guides</span>
         </div>
       </header>
+
+      {/* Winter 2026 exam timetable */}
+      <StoreExamTimetable />
 
       {/* Hero */}
       <section className="overflow-x-clip border-b border-[#E2E7F0] bg-white">
