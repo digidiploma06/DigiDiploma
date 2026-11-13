@@ -1,6 +1,6 @@
 import { useEffect, type ReactNode } from "react";
 import { useLocation } from "react-router-dom";
-import { CursorGlow, useFinePointer, useLiteMotion } from "./motion";
+import { useLiteMotion } from "./motion";
 
 /** Admin screens keep the original light theme. */
 const isAdminPath = (pathname: string) => pathname.startsWith("/admin");
@@ -12,7 +12,6 @@ const isAdminPath = (pathname: string) => pathname.startsWith("/admin");
 const SkinController = () => {
   const { pathname } = useLocation();
   const lite = useLiteMotion();
-  const fine = useFinePointer();
   const admin = isAdminPath(pathname);
 
   useEffect(() => {
@@ -29,7 +28,7 @@ const SkinController = () => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  return <CursorGlow enabled={!admin && fine && !lite && pathname !== "/"} />;
+  return null;
 };
 
 /** Fades each page in when the top-level route changes. */

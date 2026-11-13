@@ -1,13 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode, type CSSProperties } from "react";
-import {
-  motion,
-  useInView,
-  useMotionValue,
-  useSpring,
-  useTransform,
-  useReducedMotion,
-  animate,
-} from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from "framer-motion";
 import Lenis from "lenis";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -62,7 +54,7 @@ export function useSmoothScroll(enabled: boolean) {
 export function Reveal({
   children,
   delay = 0,
-  y = 36,
+  y = 14,
   className,
 }: {
   children: ReactNode;
@@ -73,17 +65,17 @@ export function Reveal({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y }}
+      initial={{ opacity: 0, y: Math.min(y, 14) }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px 0px -60px 0px" }}
-      transition={{ duration: 0.8, delay, ease: EASE }}
+      transition={{ duration: 0.45, delay: Math.min(delay, 0.15), ease: EASE }}
     >
       {children}
     </motion.div>
   );
 }
 
-/** Headline that rises in word by word. */
+/** Headline text. Plain design: the whole line fades in once, no per-word motion. */
 export function SplitWords({
   text,
   className,
@@ -95,24 +87,16 @@ export function SplitWords({
   delay?: number;
   wordClassName?: (word: string, index: number) => string | undefined;
 }) {
-  const words = text.split(" ");
   return (
-    <span className={className} aria-label={text}>
-      {words.map((word, i) => (
-        <span key={i} aria-hidden className="inline-block overflow-hidden align-bottom pb-[0.12em] -mb-[0.12em]">
-          <motion.span
-            className={`inline-block ${wordClassName?.(word, i) ?? ""}`}
-            initial={{ y: "110%", rotate: 6 }}
-            whileInView={{ y: "0%", rotate: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.9, delay: delay + i * 0.07, ease: EASE }}
-          >
-            {word}
-            {i < words.length - 1 ? " " : ""}
-          </motion.span>
-        </span>
-      ))}
-    </span>
+    <motion.span
+      className={`${className ?? ""} ${wordClassName?.(text, 0) ?? ""}`}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: Math.min(delay, 0.2), ease: EASE }}
+    >
+      {text}
+    </motion.span>
   );
 }
 
@@ -217,25 +201,11 @@ export function Magnetic({
   );
 }
 
-/** Number that counts up when it scrolls into view. */
+/** Stat number. Plain design: shown as-is, no count-up. */
 export function Counter({ value, suffix = "", className }: { value: number; suffix?: string; className?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-40px" });
-  const [display, setDisplay] = useState(0);
-
-  useEffect(() => {
-    if (!inView) return;
-    const controls = animate(0, value, {
-      duration: 1.8,
-      ease: EASE,
-      onUpdate: (v) => setDisplay(Math.round(v)),
-    });
-    return () => controls.stop();
-  }, [inView, value]);
-
   return (
-    <span ref={ref} className={className}>
-      {display.toLocaleString("en-IN")}
+    <span className={className}>
+      {value.toLocaleString("en-IN")}
       {suffix}
     </span>
   );

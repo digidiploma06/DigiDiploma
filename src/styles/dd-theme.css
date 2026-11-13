@@ -379,3 +379,64 @@
     display: none !important;
   }
 }
+
+/* =====================================================================
+   PLAIN DESIGN — simpler and cleaner: no glow, no moving backgrounds,
+   flat colours, only gentle fades. Remove this block to bring the
+   heavier effects back.
+   ===================================================================== */
+
+.dd-blob,
+.dd-grid-bg,
+.dd-noise::after,
+.dd-card::before {
+  display: none;
+}
+
+.dd-float,
+.dd-float-slow,
+.dd-scroll-cue {
+  animation: none;
+}
+
+.dd-grad-text {
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  color: var(--dd-violet-2);
+}
+
+.dd-card {
+  background: var(--dd-surface);
+  border-radius: 16px;
+}
+
+.dd-card:hover {
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.dd-btn {
+  border-radius: 12px;
+  height: 3.1rem;
+}
+
+.dd-btn-lime:hover,
+.dd-btn-violet:hover {
+  box-shadow: none;
+  filter: brightness(1.08);
+}
+
+.dd-display {
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  font-weight: 700;
+}
+
+.dd-glass {
+  background: rgba(11, 11, 20, 0.92);
+  box-shadow: none !important;
+}
+
+.dd-plain-flat {
+  background: var(--dd-ink-2) !important;
+  box-shadow: none !important;
+}

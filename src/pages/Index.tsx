@@ -25,7 +25,6 @@ import {
   GraduationCap,
   Layers,
   Bell,
-  ChevronDown,
 } from "lucide-react";
 import { getBranchImage } from "@/lib/branchImages";
 import { ALL_BRANCHES } from "@/constants/branches";
@@ -33,14 +32,12 @@ import SiteNav, { WHATSAPP_COMMUNITY_URL } from "@/components/site/SiteNav";
 import SiteFooter from "@/components/site/SiteFooter";
 import {
   Counter,
-  CursorGlow,
   Magnetic,
   Marquee,
   Reveal,
   SplitWords,
   Tilt,
   motion,
-  useFinePointer,
   useLiteMotion,
   useMouseParallax,
   useSmoothScroll,
@@ -223,18 +220,6 @@ const FAQS = [
   },
 ];
 
-const TICKER_WORDS = [
-  "Notes",
-  "VVIMP Questions",
-  "Model Answers",
-  "Microprojects",
-  "PPTs",
-  "Question Banks",
-  "MSBTE K-Scheme",
-  "Handwritten Notes",
-  "Exam Timetable",
-];
-
 interface PublicNotice {
   _id?: string;
   id?: string;
@@ -249,8 +234,8 @@ const Index = () => {
   const [showWhatsAppPopup, setShowWhatsAppPopup] = useState(true);
 
   const lite = useLiteMotion();
-  const finePointer = useFinePointer();
-  const heavy = finePointer && !lite;
+  // Plain design: tilt, magnetic buttons, parallax, cursor glow and smooth-scroll are switched off.
+  const heavy = false;
   useSmoothScroll(heavy);
   const { sx, sy } = useMouseParallax(heavy);
   const nearX = useTransform(sx, [-0.5, 0.5], [-34, 34]);
@@ -259,72 +244,6 @@ const Index = () => {
   const farY = useTransform(sy, [-0.5, 0.5], [14, -14]);
   const stackRX = useTransform(sy, [-0.5, 0.5], [10, -10]);
   const stackRY = useTransform(sx, [-0.5, 0.5], [-14, 14]);
-
-  // Confetti burst when the community popup opens
-  useEffect(() => {
-    if (!showWhatsAppPopup || lite) return;
-
-    const end = Date.now() + 1000;
-    const colors = ["#7C5CFF", "#A892FF", "#C6FF3D", "#FF5FA2", "#FFFFFF"];
-
-    const canvas = document.createElement("canvas");
-    canvas.style.position = "fixed";
-    canvas.style.inset = "0";
-    canvas.style.pointerEvents = "none";
-    canvas.style.zIndex = "9999";
-    document.body.appendChild(canvas);
-    const ctx = canvas.getContext("2d");
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    const particles = Array.from({ length: 120 }).map(() => ({
-      x: canvas.width / 2,
-      y: canvas.height / 3,
-      vx: (Math.random() - 0.5) * 8,
-      vy: (Math.random() - 1.2) * 10,
-      g: 0.25 + Math.random() * 0.2,
-      size: 3 + Math.random() * 4,
-      color: colors[(Math.random() * colors.length) | 0],
-      rotation: Math.random() * Math.PI,
-      vr: (Math.random() - 0.5) * 0.2,
-    }));
-
-    let frameId = 0;
-    const cleanup = () => {
-      cancelAnimationFrame(frameId);
-      window.removeEventListener("resize", resize);
-      canvas.remove();
-    };
-    const draw = () => {
-      if (!ctx) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += p.g;
-        p.rotation += p.vr;
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rotation);
-        ctx.fillStyle = p.color;
-        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-        ctx.restore();
-      });
-      if (Date.now() < end) {
-        frameId = requestAnimationFrame(draw);
-      } else {
-        cleanup();
-      }
-    };
-    frameId = requestAnimationFrame(draw);
-
-    return cleanup;
-  }, [showWhatsAppPopup, lite]);
 
   useEffect(() => {
     // Public notices feed the ticker under the hero
@@ -344,7 +263,6 @@ const Index = () => {
 
   return (
     <div className={`dd ${lite ? "dd-lite" : ""}`}>
-      <CursorGlow enabled={heavy} />
       <SiteNav />
 
       {/* ================= HERO ================= */}
@@ -418,12 +336,12 @@ const Index = () => {
             <motion.div
               className="absolute inset-0"
               style={{ rotateX: stackRX, rotateY: stackRY, transformPerspective: 1200, transformStyle: "preserve-3d" }}
-              initial={{ opacity: 0, scale: 0.85 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ duration: 1.1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
             >
               <motion.div style={{ x: farX, y: farY }} className="absolute right-2 top-6 w-64">
-                <div className="dd-float-slow rounded-3xl border border-white/15 bg-white/[0.06] p-5 backdrop-blur-xl">
+                <div className="rounded-2xl border border-white/15 bg-white/[0.06] p-5 backdrop-blur-xl">
                   <div className="mb-4 flex items-center justify-between">
                     <span className="dd-mono text-[10px] uppercase text-white/50">Projects</span>
                     <Code className="h-4 w-4 text-white/50" />
@@ -441,8 +359,8 @@ const Index = () => {
 
               <motion.div style={{ x: nearX, y: nearY }} className="absolute left-0 top-28 w-80">
                 <div
-                  className="dd-float rounded-[28px] p-6 shadow-[0_40px_120px_-30px_rgba(124,92,255,0.9)]"
-                  style={{ background: "linear-gradient(150deg, #7c5cff 0%, #4b2fd6 100%)" }}
+                  className="rounded-2xl p-6"
+                  style={{ background: "#5b3fe0" }}
                 >
                   <div className="mb-8 flex items-center justify-between">
                     <span className="dd-mono text-[11px] uppercase text-white/70">Study Material</span>
@@ -461,7 +379,7 @@ const Index = () => {
 
               <motion.div style={{ x: farX, y: nearY }} className="absolute bottom-6 right-0 w-64">
                 <div
-                  className="dd-float-slow rounded-3xl p-5"
+                  className="rounded-2xl p-5"
                   style={{ background: "var(--dd-lime)", color: "var(--dd-ink)" }}
                 >
                   <div className="mb-6 flex items-center justify-between">
@@ -502,13 +420,10 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="relative z-10 mt-10 hidden justify-center lg:flex" aria-hidden>
-          <ChevronDown className="dd-scroll-cue h-6 w-6 text-white/40" />
-        </div>
       </section>
 
       {/* ================= TICKER ================= */}
-      <section className="relative border-y border-white/10 bg-[var(--dd-ink-2)] py-5" aria-label="Highlights">
+      <section className={notices.length > 0 ? "relative border-y border-white/10 bg-[var(--dd-ink-2)] py-5" : "hidden"} aria-label="Notices">
         {notices.length > 0 ? (
           <Marquee speed={Math.max(30, notices.length * 12)}>
             {notices.map((n, i) => (
@@ -519,16 +434,7 @@ const Index = () => {
               </span>
             ))}
           </Marquee>
-        ) : (
-          <Marquee speed={36}>
-            {TICKER_WORDS.map((w) => (
-              <span key={w} className="dd-display flex items-center gap-12 whitespace-nowrap text-2xl text-white/80">
-                {w}
-                <Star className="h-4 w-4 fill-current" style={{ color: "var(--dd-lime)" }} />
-              </span>
-            ))}
-          </Marquee>
-        )}
+        ) : null}
       </section>
 
       {/* ================= FEATURES ================= */}
@@ -740,8 +646,8 @@ const Index = () => {
       <section className="relative px-3 pb-24 sm:px-6">
         <Reveal>
           <div
-            className="dd-noise relative mx-auto max-w-7xl overflow-hidden rounded-[36px] px-6 py-20 text-center sm:px-12 sm:py-28"
-            style={{ background: "linear-gradient(135deg, #7c5cff 0%, #3a1fb8 55%, #150a52 100%)" }}
+            className="relative mx-auto max-w-7xl overflow-hidden rounded-2xl px-6 py-16 text-center sm:px-12 sm:py-20"
+            style={{ background: "#5b3fe0" }}
           >
             <div className="dd-blob dd-blob-b" style={{ top: "-30%", right: "-10%" }} aria-hidden />
             <h2 className="dd-display relative mx-auto max-w-4xl text-5xl text-white sm:text-7xl">
@@ -775,7 +681,7 @@ const Index = () => {
 
       {/* ================= WhatsApp community popup ================= */}
       <Dialog open={showWhatsAppPopup} onOpenChange={setShowWhatsAppPopup}>
-        <DialogContent className="overflow-hidden rounded-3xl border border-white/10 bg-[#11111c] p-0 text-white shadow-[0_30px_120px_-30px_rgba(124,92,255,0.9)] sm:max-w-md">
+        <DialogContent className="overflow-hidden rounded-3xl border border-white/10 bg-[#11111c] p-0 text-white shadow-2xl sm:max-w-md">
           <DialogHeader className="p-0">
             <DialogTitle className="sr-only">Join our Group for IMPs</DialogTitle>
             <DialogDescription className="sr-only">
@@ -784,11 +690,10 @@ const Index = () => {
           </DialogHeader>
           <div
             className="relative px-8 pb-7 pt-9 text-center"
-            style={{ background: "linear-gradient(150deg, #7c5cff 0%, #3a1fb8 100%)" }}
+            style={{ background: "#5b3fe0" }}
           >
             <div className="relative mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[#25D366] shadow-xl">
-              <div className="absolute -inset-3 -z-10 rounded-full bg-[#25D366] opacity-50 blur-2xl" />
-              <img
+                            <img
                 src="https://cdn.simpleicons.org/whatsapp/FFFFFF"
                 alt="WhatsApp"
                 className="h-9 w-9"

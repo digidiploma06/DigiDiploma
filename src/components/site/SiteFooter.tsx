@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Instagram, Linkedin, MessageCircle, Youtube, ArrowUpRight } from "lucide-react";
 import { ALL_BRANCHES } from "@/constants/branches";
-import { Marquee } from "./motion";
 import { WHATSAPP_COMMUNITY_URL } from "./SiteNav";
 
 const TelegramIcon = () => (
@@ -35,14 +34,6 @@ const EXPLORE = [
 
 const SiteFooter = () => (
   <footer className="relative border-t border-white/10 bg-[#07070d]">
-    <Marquee speed={40} className="border-b border-white/10 py-6">
-      {["Notes", "VVIMP", "Model Answers", "Projects", "MSBTE K-Scheme", "Question Banks", "Microprojects"].map((w) => (
-        <span key={w} className="dd-display flex items-center gap-12 text-5xl text-white/[0.07] sm:text-7xl">
-          {w}
-          <span className="inline-block h-3 w-3 rounded-full" style={{ background: "var(--dd-lime)", opacity: 0.6 }} />
-        </span>
-      ))}
-    </Marquee>
 
     <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8">
       <div className="grid gap-12 md:grid-cols-12">
