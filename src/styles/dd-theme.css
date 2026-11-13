@@ -162,7 +162,8 @@
 /* ---------- Buttons ---------- */
 
 /* The app's global stylesheet paints every <button> indigo; undo that inside the redesign */
-.dd button:not(.dd-btn) {
+.dd button:not(.dd-btn),
+.dd-nav button:not(.dd-btn) {
   background: transparent;
   box-shadow: none;
 }
@@ -370,4 +371,11 @@
 
 .dd-snap-row::-webkit-scrollbar {
   display: none;
+}
+
+/* Utility: hide on phones (used instead of Tailwind's "hidden sm:…" on .dd-btn, which sets its own display) */
+@media (max-width: 639px) {
+  .dd-desktop-only {
+    display: none !important;
+  }
 }

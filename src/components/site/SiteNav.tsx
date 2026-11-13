@@ -38,7 +38,7 @@ const SiteNav = () => {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6"
+      className="dd-nav fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6"
     >
       <nav
         className={`mx-auto flex max-w-7xl items-center justify-between rounded-full px-4 transition-all duration-500 sm:px-6 ${
@@ -76,12 +76,12 @@ const SiteNav = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <button onClick={openCommunity} className="dd-btn dd-btn-lime dd-btn-sm hidden sm:inline-flex">
+          <button onClick={openCommunity} className="dd-btn dd-btn-lime dd-btn-sm dd-desktop-only">
             <MessageCircle className="h-4 w-4" />
             Join Community
           </button>
           <button
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white lg:hidden"
+            className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-white/25 p-0 text-white lg:hidden"
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}

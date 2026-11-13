@@ -1,3 +1,5 @@
+import { SiteNavSpacer } from "@/components/site/PageHero";
+import SiteFooter from "@/components/site/SiteFooter";
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
@@ -359,23 +361,7 @@ const ExamTimetable: React.FC = () => {
       <style>{'@page{size:A4;margin:14mm} @media print{html,body{background:#fff!important}}'}</style>
 
       <div className="print:hidden">
-        {/* Top bar */}
-        <header className="sticky top-0 z-40 border-b border-[#E2E7F0] bg-white/90 backdrop-blur-md">
-          <div className="mx-auto flex h-16 max-w-[1160px] items-center gap-4 px-4 sm:px-6">
-            <Link to="/" className="flex shrink-0 items-center gap-2.5" aria-label="DigiDiploma home">
-              <img src={LOGO_MARK} alt="" width={40} height={40} className="h-10 w-10 rounded-[11px] bg-[#091629] shadow-[0_0_0_1px_rgba(45,226,238,.25),0_6px_14px_-8px_rgba(9,22,41,.8)]" />
-              <b className="text-lg font-extrabold tracking-[-0.02em]" style={F_DISPLAY}>DigiDiploma</b>
-            </Link>
-            <nav className="hidden items-center gap-1 text-sm font-semibold lg:flex">
-              <Link to="/" className="rounded-lg px-2.5 py-1.5 text-[#56647D] hover:bg-[#F5F7FB] hover:text-[#0C1A33]">Home</Link>
-              <Link to="/materials" className="rounded-lg px-2.5 py-1.5 text-[#56647D] hover:bg-[#F5F7FB] hover:text-[#0C1A33]">Materials</Link>
-              <Link to="/vvimp-store" className="rounded-lg px-2.5 py-1.5 text-[#56647D] hover:bg-[#F5F7FB] hover:text-[#0C1A33]">VVIMP Store</Link>
-            </nav>
-            <Link to="/vvimp-store" className="ml-auto inline-flex h-10 items-center gap-1.5 rounded-[10px] bg-[#1F4FE0] px-3.5 text-sm font-bold text-white hover:bg-[#0B2A86]">
-              All guides <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </header>
+        <SiteNavSpacer />
 
         {/* Hero */}
         <section className="border-b border-[#E2E7F0] bg-white">
@@ -722,19 +708,7 @@ const ExamTimetable: React.FC = () => {
           </div>
         </section>
 
-        <footer className="bg-[#091629] text-sm text-white/70">
-          <div className="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-x-8 gap-y-3.5 px-4 py-7 sm:px-6">
-            <span className="flex items-center gap-4">
-              <img src={LOGO_FULL} alt="DigiDiploma logo" width={96} height={78} className="h-auto w-24 rounded-[10px]" />
-              <span>
-                Study smart, not hard.
-                <br />
-                MSBTE K-Scheme VVIMP guides
-              </span>
-            </span>
-            <span className="text-[12.5px]" style={F_MONO}>digidiploma.in · digidiplomahelp@gmail.com</span>
-          </div>
-        </footer>
+        <SiteFooter />
       </div>
 
       {/* Print / PDF view */}

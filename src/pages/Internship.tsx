@@ -1,3 +1,5 @@
+import { SiteNavSpacer } from "@/components/site/PageHero";
+import SiteFooter from "@/components/site/SiteFooter";
 import InternshipForm from "@/components/InternshipForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -39,6 +41,7 @@ const Internship = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-white">
+      <SiteNavSpacer />
       <header className="bg-white border-b">
         <div className="container mx-auto px-4 py-12 grid gap-8 lg:grid-cols-2 items-center">
           <div>
@@ -165,6 +168,7 @@ const Internship = () => {
           </div>
         </section>
       </main>
+      <SiteFooter />
     </div>
   );
 };

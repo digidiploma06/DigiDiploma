@@ -1,3 +1,5 @@
+import { SiteNavSpacer } from "@/components/site/PageHero";
+import SiteFooter from "@/components/site/SiteFooter";
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
@@ -253,26 +255,11 @@ const VvimpStore: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F5F7FB] text-[#0C1A33] antialiased" style={F_BODY}>
-      {/* Top bar */}
-      <header className="sticky top-0 z-40 border-b border-[#E2E7F0] bg-white/90 backdrop-blur-md">
+      <SiteNavSpacer />
+      {/* Search bar */}
+      <div className="border-b border-[#E2E7F0]">
         <div className="mx-auto flex h-16 max-w-[1160px] items-center gap-4 px-4 sm:px-6">
-          <Link to="/" className="flex shrink-0 items-center gap-2.5" aria-label="DigiDiploma home">
-            <img
-              src={LOGO_MARK}
-              alt=""
-              width={40}
-              height={40}
-              className="h-10 w-10 rounded-[11px] bg-[#091629] shadow-[0_0_0_1px_rgba(45,226,238,.25),0_6px_14px_-8px_rgba(9,22,41,.8)]"
-            />
-            <b className="hidden text-lg font-extrabold tracking-[-0.02em] sm:block" style={F_DISPLAY}>DigiDiploma</b>
-          </Link>
-          <nav className="hidden items-center gap-1 text-sm font-semibold lg:flex">
-            <Link to="/" className="rounded-lg px-2.5 py-1.5 text-[#56647D] hover:bg-[#F5F7FB] hover:text-[#0C1A33]">Home</Link>
-            <Link to="/materials" className="rounded-lg px-2.5 py-1.5 text-[#56647D] hover:bg-[#F5F7FB] hover:text-[#0C1A33]">Materials</Link>
-            <Link to="/projects" className="rounded-lg px-2.5 py-1.5 text-[#56647D] hover:bg-[#F5F7FB] hover:text-[#0C1A33]">Projects</Link>
-            <Link to="/exam-timetable" className="rounded-lg px-2.5 py-1.5 text-[#56647D] hover:bg-[#F5F7FB] hover:text-[#0C1A33]">Exam Timetable</Link>
-          </nav>
-          <label htmlFor="vvimp-q" className="relative ml-auto w-full max-w-[440px]">
+          <label htmlFor="vvimp-q" className="relative w-full max-w-[440px]">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#56647D]" />
             <input
               id="vvimp-q"
@@ -286,9 +273,9 @@ const VvimpStore: React.FC = () => {
               className="h-[42px] w-full rounded-[11px] border border-[#E2E7F0] bg-[#F5F7FB] pl-[38px] pr-3.5 text-[14.5px] transition-colors focus:border-[#1F4FE0] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#EDF2FE]"
             />
           </label>
-          <span className="hidden shrink-0 text-xs text-[#56647D] md:block" style={F_MONO}>{VVIMP_PRODUCTS.length} guides</span>
+          <span className="ml-auto hidden shrink-0 text-xs text-[#56647D] md:block" style={F_MONO}>{VVIMP_PRODUCTS.length} guides</span>
         </div>
-      </header>
+      </div>
 
       {/* Winter 2026 exam timetable */}
       <StoreExamTimetable />
@@ -577,20 +564,7 @@ const VvimpStore: React.FC = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-[#091629] text-sm text-white/70">
-        <div className="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-x-8 gap-y-3.5 px-4 py-7 sm:px-6">
-          <span className="flex items-center gap-4">
-            <img src={LOGO_FULL} alt="DigiDiploma logo" width={96} height={78} className="h-auto w-24 rounded-[10px]" />
-            <span>
-              Study smart, not hard.
-              <br />
-              MSBTE K-Scheme VVIMP guides
-            </span>
-          </span>
-          <span className="text-[12.5px]" style={F_MONO}>digidiploma.in · digidiplomahelp@gmail.com</span>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 };

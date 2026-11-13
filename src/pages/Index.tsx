@@ -46,7 +46,6 @@ import {
   useSmoothScroll,
   useTransform,
 } from "@/components/site/motion";
-import "@/styles/dd-theme.css";
 
 // Config for each branch card (icon, description, subjects, color) — must match ALL_BRANCHES order/names
 const BRANCH_CARD_CONFIG: Record<string, { icon: React.ReactNode; description: string; subjects: string[]; color: string }> = {

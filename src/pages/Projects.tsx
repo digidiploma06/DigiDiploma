@@ -1,3 +1,5 @@
+import PageHero from "@/components/site/PageHero";
+import SiteFooter from "@/components/site/SiteFooter";
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { authService } from '@/lib/auth';
@@ -581,33 +583,15 @@ const Projects = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Header */}
-      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-sm">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between py-4">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate(isAuthenticated ? '/student-dashboard' : '/')}
-                className="text-blue-600 hover:text-blue-700 bg-blue-500/10 backdrop-blur-sm border-2 border-cyan-400/50 ring-2 ring-cyan-400/30 hover:ring-cyan-400/50 transition-all"
-              >
-                <ArrowLeft className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">{isAuthenticated ? 'Back to Dashboard' : 'Back to Home'}</span>
-              </Button>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-green-600 to-green-700 rounded-xl flex items-center justify-center">
-                  <Code className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-slate-800">Projects</h1>
-                  <p className="text-sm text-slate-600">Browse and share academic projects</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHero compact eyebrow="Build · Share · Learn" title="Student" accent="Projects" subtitle="Browse and share academic projects">
+        <button
+          onClick={() => navigate(isAuthenticated ? '/student-dashboard' : '/')}
+          className="dd-btn dd-btn-ghost dd-btn-sm"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {isAuthenticated ? 'Back to Dashboard' : 'Back to Home'}
+        </button>
+      </PageHero>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
@@ -1579,6 +1563,7 @@ const Projects = () => {
           )}
         </DialogContent>
       </Dialog>
+      <SiteFooter />
     </div>
   );
 };

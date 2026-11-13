@@ -1,0 +1,187 @@
+/*
+ * Dark theme for the public and student pages.
+ * Active when <body> has the class `dd-skin` (set by SkinController, never on /admin routes).
+ * Colour-class remaps live in dd-skin.generated.css; this file holds the hand-written parts.
+ * :where() keeps specificity low so Tailwind utilities on an element still win.
+ */
+
+@media screen {
+  body.dd-skin {
+    /* shadcn/ui tokens */
+    --background: 240 29% 6%;
+    --foreground: 48 17% 94%;
+    --card: 240 24% 11%;
+    --card-foreground: 48 17% 94%;
+    --popover: 240 24% 11%;
+    --popover-foreground: 48 17% 94%;
+    --primary: 252 100% 68%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 252 100% 78%;
+    --secondary: 240 18% 18%;
+    --secondary-foreground: 48 17% 94%;
+    --muted: 240 20% 15%;
+    --muted-foreground: 243 11% 68%;
+    --accent: 250 40% 22%;
+    --accent-foreground: 48 17% 94%;
+    --border: 240 15% 20%;
+    --input: 240 15% 24%;
+    --ring: 252 100% 68%;
+
+    background: var(--dd-ink);
+    color: var(--dd-text);
+    color-scheme: dark;
+    font-family: "Figtree", "Inter", system-ui, sans-serif;
+  }
+
+  :where(.dd-skin) h1,
+  :where(.dd-skin) h2,
+  :where(.dd-skin) h3,
+  :where(.dd-skin) h4,
+  :where(.dd-skin) h5,
+  :where(.dd-skin) h6 {
+    color: inherit;
+  }
+
+  :where(.dd-skin) h1,
+  :where(.dd-skin) h2 {
+    font-family: "Schibsted Grotesk", "Figtree", system-ui, sans-serif;
+    letter-spacing: -0.03em;
+  }
+
+  :where(.dd-skin) label {
+    color: #d9d8e3;
+  }
+
+  :where(.dd-skin) input,
+  :where(.dd-skin) select,
+  :where(.dd-skin) textarea {
+    background: rgb(255 255 255 / 0.05);
+    color: var(--dd-text);
+    border-color: rgb(255 255 255 / 0.14);
+  }
+
+  :where(.dd-skin) input::placeholder,
+  :where(.dd-skin) textarea::placeholder {
+    color: #8a899c;
+  }
+
+  :where(.dd-skin) input:focus,
+  :where(.dd-skin) select:focus,
+  :where(.dd-skin) textarea:focus {
+    border-color: var(--dd-violet);
+  }
+
+  :where(.dd-skin) option {
+    background: var(--dd-surface);
+    color: var(--dd-text);
+  }
+
+  :where(.dd-skin) button,
+  :where(.dd-skin) .btn-hero {
+    background: var(--dd-violet);
+  }
+
+  :where(.dd-skin) button:hover,
+  :where(.dd-skin) .btn-hero:hover {
+    background: #6a48f5;
+  }
+
+  :where(.dd-skin) .card,
+  :where(.dd-skin) .shadow-card {
+    background: var(--dd-surface);
+  }
+
+  /* index.css forces these with !important, so the skin has to as well */
+  .dd-skin .bg-muted,
+  .dd-skin .bg-muted\/40 {
+    background: rgb(255 255 255 / 0.06) !important;
+  }
+
+  .dd-skin .text-primary {
+    color: var(--dd-violet-2) !important;
+  }
+
+  .dd-skin .text-muted-foreground {
+    color: var(--dd-mute) !important;
+  }
+
+  :where(.dd-skin) .glass,
+  :where(.dd-skin) .glass-card {
+    background-color: rgb(17 17 28 / 0.8);
+    border-color: var(--dd-line);
+  }
+
+  :where(.dd-skin) .text-gradient-primary {
+    background-image: linear-gradient(100deg, var(--dd-violet-2), var(--dd-lime));
+  }
+
+  /* Marker-pen highlights in headlines: violet instead of yellow so light text stays readable */
+  :where(.dd-skin) mark[class*="linear-gradient"] {
+    background-image: linear-gradient(transparent 60%, rgb(124 92 255 / 0.75) 60%, rgb(124 92 255 / 0.75) 94%, transparent 94%);
+    color: inherit;
+  }
+
+  /* ---------- Motion for the reskinned pages ---------- */
+
+  /* shadcn cards lift and glow on hover */
+  :where(.dd-skin) .bg-card.rounded-lg.border,
+  :where(.dd-skin) .dd-lift {
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.35s ease;
+  }
+
+  @media (hover: hover) {
+    :where(.dd-skin) .bg-card.rounded-lg.border:hover,
+    :where(.dd-skin) .dd-lift:hover {
+      transform: translateY(-4px);
+      border-color: rgb(198 255 61 / 0.35);
+      box-shadow: 0 24px 60px -30px rgb(124 92 255 / 0.8);
+    }
+  }
+
+  /* Scroll-driven reveal (Chrome / Android). Other browsers simply show the content. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      :where(.dd-skin) main .bg-card.rounded-lg.border,
+      :where(.dd-skin) .dd-reveal {
+        animation: dd-rise linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 55%;
+      }
+    }
+  }
+
+  @keyframes dd-rise {
+    from {
+      opacity: 0;
+      transform: translateY(36px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .dd-lite :where(.dd-skin) .dd-reveal,
+  body.dd-skin.dd-lite main .bg-card.rounded-lg.border,
+  body.dd-skin.dd-lite .dd-reveal {
+    animation: none;
+  }
+
+  /* Page fade on route change (opacity only: transforms would break fixed nav bars) */
+  .dd-page-enter {
+    animation: dd-page-in 0.5s ease both;
+  }
+
+  @keyframes dd-page-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  body.dd-skin ::-webkit-scrollbar-track {
+    background: var(--dd-ink);
+  }
+
+  body.dd-skin ::-webkit-scrollbar-thumb {
+    background: rgb(124 92 255 / 0.45);
+  }
+}
