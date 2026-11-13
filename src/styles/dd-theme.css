@@ -468,3 +468,350 @@
     animation: none;
   }
 }
+
+/* =====================================================================
+   Design details: hero backdrop, floating chips, underline, step line,
+   branch ticker, chat preview. All decorative; motion stops for users
+   who prefer reduced motion.
+   ===================================================================== */
+
+.dd-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--dd-blue), #7c3aed);
+  transform-origin: 0 50%;
+  z-index: 60;
+}
+
+.dd-accent-grad {
+  background: linear-gradient(100deg, #2563eb 10%, #7c3aed 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--dd-blue);
+}
+
+.dd-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.dd-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(600px 320px at 15% 0%, rgba(37, 99, 235, 0.1), transparent 70%),
+    radial-gradient(520px 320px at 88% 12%, rgba(124, 58, 237, 0.09), transparent 70%);
+  pointer-events: none;
+}
+
+.dd-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(15, 23, 42, 0.09) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 20%, #000 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 20%, #000 20%, transparent 75%);
+  pointer-events: none;
+}
+
+.dd-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* hand-drawn underline under the hero accent words */
+.dd-underline {
+  position: relative;
+  white-space: nowrap;
+}
+
+.dd-underline svg {
+  position: absolute;
+  left: 0;
+  bottom: -0.16em;
+  width: 100%;
+  height: 0.32em;
+  overflow: visible;
+}
+
+.dd-underline path {
+  fill: none;
+  stroke: #f59e0b;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 320;
+  stroke-dashoffset: 320;
+  animation: dd-draw 0.9s 0.5s ease-out forwards;
+}
+
+@keyframes dd-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* floating chips beside the hero headline (large screens only) */
+.dd-chip {
+  position: absolute;
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.95rem;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid var(--dd-line);
+  box-shadow: 0 16px 36px -20px rgba(15, 23, 42, 0.35);
+  color: var(--dd-ink);
+  font-weight: 700;
+  font-size: 0.9rem;
+  animation: dd-bob 6s ease-in-out infinite;
+}
+
+.dd-chip span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9px;
+}
+
+@media (min-width: 1180px) {
+  .dd-chip {
+    display: inline-flex;
+  }
+}
+
+@keyframes dd-bob {
+  0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+  50% { transform: translateY(-10px) rotate(var(--r, 0deg)); }
+}
+
+/* stats card accent */
+.dd-stats {
+  position: relative;
+  overflow: hidden;
+}
+
+.dd-stats::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--dd-blue), #7c3aed, #f59e0b);
+}
+
+/* branch ticker */
+.dd-ticker {
+  display: flex;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.dd-ticker-track {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.75rem;
+  padding-right: 0.75rem;
+  animation: dd-ticker 38s linear infinite;
+}
+
+.dd-ticker:hover .dd-ticker-track {
+  animation-play-state: paused;
+}
+
+.dd-ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 9999px;
+  border: 1px solid var(--dd-line);
+  background: #fff;
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.dd-ticker-item:hover {
+  border-color: #bfdbfe;
+  color: var(--dd-blue);
+}
+
+@keyframes dd-ticker {
+  to { transform: translateX(-100%); }
+}
+
+/* numbered steps joined by a dashed line */
+.dd-steps {
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .dd-steps::before {
+    content: "";
+    position: absolute;
+    top: 66px;
+    left: 16.66%;
+    right: 16.66%;
+    border-top: 2px dashed #bfdbfe;
+  }
+}
+
+.dd-step {
+  position: relative;
+}
+
+.dd-step-num {
+  position: absolute;
+  top: -12px;
+  right: -8px;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 9999px;
+  background: var(--dd-ink);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+}
+
+/* icon fills with colour when its card is hovered */
+.dd-icon {
+  transition: background 0.2s ease, color 0.2s ease, transform 0.25s ease;
+}
+
+@media (hover: hover) {
+  .dd-card-link:hover .dd-icon {
+    background: var(--dd-blue);
+    color: #fff;
+    transform: scale(1.06) rotate(-4deg);
+  }
+}
+
+/* service cards: coloured top edge on hover */
+.dd-card-top {
+  position: relative;
+  overflow: hidden;
+}
+
+.dd-card-top::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--dd-blue), #7c3aed);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.dd-card-top:hover::before {
+  transform: scaleX(1);
+}
+
+/* community chat preview */
+.dd-bubble {
+  max-width: 85%;
+  padding: 0.7rem 0.95rem;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.dd-bubble-in {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  border-bottom-left-radius: 4px;
+}
+
+.dd-bubble-out {
+  background: #22c55e;
+  color: #052e16;
+  font-weight: 600;
+  margin-left: auto;
+  border-bottom-right-radius: 4px;
+}
+
+.dd-band {
+  position: relative;
+  overflow: hidden;
+}
+
+.dd-band::before {
+  content: "";
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  right: -160px;
+  top: -200px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.35), transparent 65%);
+  pointer-events: none;
+}
+
+.dd-band > * {
+  position: relative;
+}
+
+.dd-cta {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(120deg, #2563eb 0%, #4f46e5 100%);
+}
+
+.dd-cta::before,
+.dd-cta::after {
+  content: "";
+  position: absolute;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  pointer-events: none;
+}
+
+.dd-cta::before {
+  width: 420px;
+  height: 420px;
+  left: -140px;
+  bottom: -220px;
+}
+
+.dd-cta::after {
+  width: 300px;
+  height: 300px;
+  right: -90px;
+  top: -150px;
+}
+
+.dd-cta > * {
+  position: relative;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dd-chip,
+  .dd-ticker-track {
+    animation: none;
+  }
+
+  .dd-underline path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .dd-progress {
+    display: none;
+  }
+}

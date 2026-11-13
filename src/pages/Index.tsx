@@ -36,7 +36,7 @@ import { ALL_BRANCHES } from "@/constants/branches";
 import { VVIMP_PRODUCTS } from "@/data/vvimpProducts";
 import SiteNav, { WHATSAPP_COMMUNITY_URL } from "@/components/site/SiteNav";
 import SiteFooter from "@/components/site/SiteFooter";
-import { Reveal } from "@/components/site/motion";
+import { Counter, Reveal, ScrollProgress } from "@/components/site/motion";
 
 const TELEGRAM_URL = "https://t.me/digidiploma";
 
@@ -107,26 +107,26 @@ const BRANCH_CARD_CONFIG: Record<string, { icon: React.ReactNode; description: s
 
 
 const STATS = [
-  { icon: <Users className="h-7 w-7" />, value: "1,250+", label: "Active Students" },
-  { icon: <GraduationCap className="h-7 w-7" />, value: "45+", label: "Faculty Members" },
-  { icon: <BookOpen className="h-7 w-7" />, value: "120+", label: "Courses Available" },
-  { icon: <FileText className="h-7 w-7" />, value: "850+", label: "Study Materials" },
+  { icon: <Users className="h-7 w-7" />, value: 1250, label: "Active Students" },
+  { icon: <GraduationCap className="h-7 w-7" />, value: 45, label: "Faculty Members" },
+  { icon: <BookOpen className="h-7 w-7" />, value: 120, label: "Courses Available" },
+  { icon: <FileText className="h-7 w-7" />, value: 850, label: "Study Materials" },
 ];
 
 const STEPS = [
   {
     icon: <Search className="h-7 w-7" />,
-    title: "1. Find Your Subject",
+    title: "Find Your Subject",
     text: "Pick your branch and semester. Every subject follows the MSBTE K-Scheme.",
   },
   {
     icon: <Download className="h-7 w-7" />,
-    title: "2. Download",
+    title: "Download",
     text: "Save notes, PPTs and projects to your phone and study offline.",
   },
   {
     icon: <Rocket className="h-7 w-7" />,
-    title: "3. Join & Excel",
+    title: "Join & Excel",
     text: "Join the community for exam updates and important questions.",
   },
 ];
@@ -298,6 +298,7 @@ const Index = () => {
 
   return (
     <div className="dd">
+      <ScrollProgress />
       <SiteNav />
 
       {/* Latest notice strip (only when a notice is published) */}
@@ -312,12 +313,37 @@ const Index = () => {
       ) : null}
 
       {/* ================= HERO ================= */}
-      <section className="pb-16 pt-14 sm:pt-20 md:pb-24">
+      <section className="dd-hero pb-16 pt-14 sm:pt-20 md:pb-24">
+        {/* Decorative floating chips (large screens) */}
+        <div className="dd-container relative hidden xl:block" aria-hidden>
+          <div className="dd-chip" style={{ left: 0, top: 40, ["--r" as string]: "-6deg" }}>
+            <span style={{ background: "#dbeafe", color: "#2563eb" }}><FileText className="h-4 w-4" /></span>
+            Notes &amp; PDFs
+          </div>
+          <div className="dd-chip" style={{ left: 40, top: 250, animationDelay: "1.2s", ["--r" as string]: "4deg" }}>
+            <span style={{ background: "#fef3c7", color: "#d97706" }}><Star className="h-4 w-4" /></span>
+            VVIMP Guides
+          </div>
+          <div className="dd-chip" style={{ right: 0, top: 60, animationDelay: "0.6s", ["--r" as string]: "5deg" }}>
+            <span style={{ background: "#ede9fe", color: "#7c3aed" }}><Code className="h-4 w-4" /></span>
+            Free Projects
+          </div>
+          <div className="dd-chip" style={{ right: 50, top: 260, animationDelay: "1.8s", ["--r" as string]: "-4deg" }}>
+            <span style={{ background: "#dcfce7", color: "#16a34a" }}><CalendarDays className="h-4 w-4" /></span>
+            Exam Timetable
+          </div>
+        </div>
         <div className="dd-container text-center">
           <Reveal>
             <span className="dd-eyebrow">MSBTE K-Scheme · Diploma &amp; Engineering</span>
             <h1 className="dd-h1 mx-auto mt-6 max-w-4xl">
-              Study Smarter, <span className="dd-accent">Score Better!</span>
+              Study Smarter,{" "}
+              <span className="dd-underline">
+                <span className="dd-accent-grad">Score Better!</span>
+                <svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden>
+                  <path d="M4 14 C 60 2, 120 20, 180 9 S 270 6, 296 12" />
+                </svg>
+              </span>
             </h1>
             <p className="dd-lead mx-auto mt-6 max-w-2xl">
               All your Diploma &amp; Engineering free resources, affordable courses in one place with huge community
@@ -339,14 +365,14 @@ const Index = () => {
 
           {/* Stats */}
           <Reveal delay={0.1}>
-            <div className="dd-card mx-auto mt-14 grid max-w-4xl grid-cols-2 md:grid-cols-4">
+            <div className="dd-card dd-stats mx-auto mt-14 grid max-w-4xl grid-cols-2 md:grid-cols-4">
               {STATS.map((s, i) => (
                 <div
                   key={s.label}
                   className={`px-4 py-7 ${i % 2 === 1 ? "" : "border-r"} ${i < 2 ? "border-b md:border-b-0" : ""} ${i < 3 ? "md:border-r" : "md:border-r-0"} border-[var(--dd-line)]`}
                 >
                   <div className="mx-auto mb-3 flex justify-center text-[var(--dd-blue)]">{s.icon}</div>
-                  <div className="dd-display text-3xl font-extrabold">{s.value}</div>
+                  <Counter value={s.value} suffix="+" className="dd-display block text-3xl font-extrabold" />
                   <div className="mt-1 text-sm text-[var(--dd-mute)]">{s.label}</div>
                 </div>
               ))}
@@ -357,12 +383,22 @@ const Index = () => {
             <p className="mt-10 text-sm font-semibold uppercase tracking-wider text-[var(--dd-mute)]">
               Built for MSBTE K-Scheme diploma students
             </p>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-base font-bold text-slate-400">
-              <span>10 Branches</span>
-              <span>6 Semesters</span>
-              <span>Notes &amp; PPTs</span>
-              <span>VVIMP Guides</span>
-              <span>Projects</span>
+            <div className="dd-ticker mx-auto mt-5 max-w-4xl">
+              {[0, 1].map((copy) => (
+                <div key={copy} className="dd-ticker-track" aria-hidden={copy === 1}>
+                  {ALL_BRANCHES.map((b) => (
+                    <Link
+                      key={b}
+                      to={`/materials?branch=${encodeURIComponent(b)}`}
+                      className="dd-ticker-item"
+                      tabIndex={copy === 1 ? -1 : undefined}
+                    >
+                      <GraduationCap className="h-4 w-4 text-[var(--dd-blue)]" />
+                      {b}
+                    </Link>
+                  ))}
+                </div>
+              ))}
             </div>
           </Reveal>
         </div>
@@ -374,15 +410,18 @@ const Index = () => {
           <Reveal className="dd-section-head">
             <span className="dd-eyebrow">How it works</span>
             <h2 className="dd-h2">
-              Your Path to Success in <span className="dd-accent">3 Easy Steps</span>
+              Your Path to Success in <span className="dd-accent-grad">3 Easy Steps</span>
             </h2>
             <p className="dd-lead">From finding your subject to exam day, everything is a few taps away.</p>
           </Reveal>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="dd-steps grid gap-6 md:grid-cols-3">
             {STEPS.map((s, i) => (
               <Reveal key={s.title} delay={0.06 * i}>
                 <div className="dd-card h-full p-8 text-center">
-                  <div className="dd-icon dd-icon-round mx-auto">{s.icon}</div>
+                  <div className="dd-step mx-auto w-fit">
+                    <div className="dd-icon dd-icon-round">{s.icon}</div>
+                    <span className="dd-step-num">{i + 1}</span>
+                  </div>
                   <h3 className="dd-h3 mt-5">{s.title}</h3>
                   <p className="mt-2 leading-relaxed">{s.text}</p>
                 </div>
@@ -398,14 +437,14 @@ const Index = () => {
           <Reveal className="dd-section-head">
             <span className="dd-eyebrow">Our services</span>
             <h2 className="dd-h2">
-              Everything You Need to <span className="dd-accent">Succeed</span>
+              Everything You Need to <span className="dd-accent-grad">Succeed</span>
             </h2>
             <p className="dd-lead">Free study material, exam guides, projects and exam dates for diploma students.</p>
           </Reveal>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {SERVICES.map((s, i) => (
               <Reveal key={s.title} delay={0.05 * i}>
-                <Link to={s.to} className="dd-card dd-card-link flex h-full flex-col p-7">
+                <Link to={s.to} className="dd-card dd-card-link dd-card-top flex h-full flex-col p-7">
                   <div className="dd-icon">{s.icon}</div>
                   <h3 className="dd-h3 mt-5">{s.title}</h3>
                   <p className="mt-2 flex-1 leading-relaxed">{s.text}</p>
@@ -444,6 +483,11 @@ const Index = () => {
           </Reveal>
           <Reveal delay={0.1}>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8">
+              <div className="mb-7 space-y-2.5 border-b border-white/10 pb-7" aria-hidden>
+                <div className="dd-bubble dd-bubble-in">Anyone has the Sem 5 notes?</div>
+                <div className="dd-bubble dd-bubble-out">Shared in the group just now ✅</div>
+                <div className="dd-bubble dd-bubble-in">Thanks! Exam timetable is out too 🎉</div>
+              </div>
               <ul className="space-y-6">
                 {COMMUNITY_POINTS.map((p) => (
                   <li key={p.title} className="flex gap-4">
@@ -468,7 +512,7 @@ const Index = () => {
           <Reveal className="dd-section-head">
             <span className="dd-eyebrow">Resources</span>
             <h2 className="dd-h2">
-              Your Complete <span className="dd-accent">Resource Library</span>
+              Your Complete <span className="dd-accent-grad">Resource Library</span>
             </h2>
             <p className="dd-lead">Choose your branch, or jump straight to the kind of resource you need.</p>
             <div className="dd-tabs mt-7" role="tablist" aria-label="Browse resources">
@@ -545,7 +589,7 @@ const Index = () => {
             <Reveal className="dd-section-head">
               <span className="dd-eyebrow">Exam season</span>
               <h2 className="dd-h2">
-                Explore Our <span className="dd-accent">VVIMP Guides</span>
+                Explore Our <span className="dd-accent-grad">VVIMP Guides</span>
               </h2>
               <p className="dd-lead">Unit-wise exam priority guides for MSBTE K-Scheme papers.</p>
             </Reveal>
@@ -596,7 +640,7 @@ const Index = () => {
           <Reveal className="dd-section-head">
             <span className="dd-eyebrow">Why DigiDiploma</span>
             <h2 className="dd-h2">
-              Why Choose <span className="dd-accent">DigiDiploma?</span>
+              Why Choose <span className="dd-accent-grad">DigiDiploma?</span>
             </h2>
             <p className="dd-lead">
               Experience the future of education with our comprehensive digital platform designed specifically for
@@ -625,7 +669,7 @@ const Index = () => {
           <Reveal className="dd-section-head">
             <span className="dd-eyebrow">Student reviews</span>
             <h2 className="dd-h2">
-              What Our <span className="dd-accent">Students Say</span>
+              What Our <span className="dd-accent-grad">Students Say</span>
             </h2>
             <p className="dd-lead">
               Hear from students who have transformed their learning experience with DigiDiploma.
@@ -665,7 +709,7 @@ const Index = () => {
           <Reveal className="dd-section-head">
             <span className="dd-eyebrow">Frequently Asked Questions</span>
             <h2 className="dd-h2">
-              Got Questions? <span className="dd-accent">We've Got Answers</span>
+              Got Questions? <span className="dd-accent-grad">We've Got Answers</span>
             </h2>
           </Reveal>
           <div className="mx-auto max-w-3xl">
@@ -696,7 +740,7 @@ const Index = () => {
       <section className="pb-20 sm:pb-28">
         <div className="dd-container">
           <Reveal>
-            <div className="rounded-3xl bg-[var(--dd-blue)] px-6 py-14 text-center sm:px-12 sm:py-20">
+            <div className="dd-cta rounded-3xl px-6 py-14 text-center sm:px-12 sm:py-20">
               <h2 className="dd-h2 mx-auto max-w-3xl" style={{ color: "#fff" }}>
                 Ready to Transform Your Learning Experience?
               </h2>
