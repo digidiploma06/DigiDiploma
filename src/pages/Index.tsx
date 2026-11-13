@@ -1,56 +1,44 @@
-import { useState, useEffect } from "react";
-import Hero from "@/components/Hero";
-import BranchSelection from "@/components/BranchSelection";
-import FloatingBooksBackground from "@/components/FloatingBooksBackground";
-import { useToast } from "@/hooks/use-toast";
-import { useTypingEffect } from "@/hooks/useTypingEffect";
-import { useNavigate, Link } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import {
-  Sparkles,
-  BookOpen,
-  Users,
-  Award,
-  Star,
   ArrowRight,
-  Play,
-  Code,
-  Smartphone,
-  User,
-  Cpu,
+  Award,
+  Bell,
+  BookOpen,
   Brain,
-  Target,
-  MessageCircle,
-  Download,
-  Phone,
-  Mail,
-  MapPin,
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  Youtube,
-  Menu,
-  Shield,
-  HelpCircle,
-  ChevronDown,
-  GraduationCap,
-  FileText,
-  CreditCard,
-  Lock,
-  Globe,
-  Send,
+  Briefcase,
+  CalendarDays,
   Car,
-  Radio
+  CheckCircle2,
+  Code,
+  Cpu,
+  Download,
+  FileText,
+  GraduationCap,
+  LayoutDashboard,
+  MessageCircle,
+  NotebookPen,
+  Phone,
+  Presentation,
+  Radio,
+  Rocket,
+  Search,
+  Shield,
+  Smartphone,
+  Star,
+  Target,
+  Users,
+  Zap,
 } from "lucide-react";
-import CollegeNoticeBoard from "@/components/CollegeNoticeBoard";
-import ScrollingNoticeBoard from "@/components/ScrollingNoticeBoard";
-import { getBranchImage } from "@/lib/branchImages";
 import { ALL_BRANCHES } from "@/constants/branches";
+import { VVIMP_PRODUCTS } from "@/data/vvimpProducts";
+import SiteNav, { WHATSAPP_COMMUNITY_URL } from "@/components/site/SiteNav";
+import SiteFooter from "@/components/site/SiteFooter";
+import { Counter, Reveal, ScrollProgress } from "@/components/site/motion";
+
+const TELEGRAM_URL = "https://t.me/digidiploma";
 
 // Config for each branch card (icon, description, subjects, color) — must match ALL_BRANCHES order/names
 const BRANCH_CARD_CONFIG: Record<string, { icon: React.ReactNode; description: string; subjects: string[]; color: string }> = {
@@ -116,1086 +104,721 @@ const BRANCH_CARD_CONFIG: Record<string, { icon: React.ReactNode; description: s
   }
 };
 
+
+
+const STATS = [
+  { icon: <Users className="h-7 w-7" />, value: 1250, label: "Active Students" },
+  { icon: <GraduationCap className="h-7 w-7" />, value: 45, label: "Faculty Members" },
+  { icon: <BookOpen className="h-7 w-7" />, value: 120, label: "Courses Available" },
+  { icon: <FileText className="h-7 w-7" />, value: 850, label: "Study Materials" },
+];
+
+const STEPS = [
+  {
+    icon: <Search className="h-7 w-7" />,
+    title: "Find Your Subject",
+    text: "Pick your branch and semester. Every subject follows the MSBTE K-Scheme.",
+  },
+  {
+    icon: <Download className="h-7 w-7" />,
+    title: "Download",
+    text: "Save notes, PPTs and projects to your phone and study offline.",
+  },
+  {
+    icon: <Rocket className="h-7 w-7" />,
+    title: "Join & Excel",
+    text: "Join the community for exam updates and important questions.",
+  },
+];
+
+const SERVICES = [
+  {
+    icon: <BookOpen className="h-6 w-6" />,
+    title: "MSBTE Materials",
+    text: "PDFs, PPTs, videos and handwritten notes organized by branch, semester and subject.",
+    cta: "Explore Materials",
+    to: "/materials",
+  },
+  {
+    icon: <Star className="h-6 w-6" />,
+    title: "VVIMP Guides",
+    text: "Unit-wise exam priority guides for MSBTE K-Scheme papers.",
+    cta: "Open VVIMP Store",
+    to: "/vvimp-store",
+  },
+  {
+    icon: <Code className="h-6 w-6" />,
+    title: "Free Projects",
+    text: "Browse and share academic projects and build your portfolio.",
+    cta: "Browse Projects",
+    to: "/projects",
+  },
+  {
+    icon: <CalendarDays className="h-6 w-6" />,
+    title: "Exam Timetable",
+    text: "Find your paper date and the matching guide for every paper.",
+    cta: "View Timetable",
+    to: "/exam-timetable",
+  },
+];
+
+const COMMUNITY_POINTS = [
+  { icon: <MessageCircle className="h-5 w-5" />, title: "Chat with peers", text: "Discuss subjects and projects with fellow students." },
+  { icon: <Zap className="h-5 w-5" />, title: "Fast access to materials", text: "New notes and important questions shared as they arrive." },
+  { icon: <Bell className="h-5 w-5" />, title: "Quick exam updates", text: "Timetable and exam announcements in one place." },
+];
+
+const RESOURCE_TYPES = [
+  { icon: <FileText className="h-6 w-6" />, title: "Notes & PDFs", text: "Subject-wise study notes", to: "/materials" },
+  { icon: <Presentation className="h-6 w-6" />, title: "PPTs", text: "Unit presentations", to: "/materials" },
+  { icon: <NotebookPen className="h-6 w-6" />, title: "Handwritten Notes", text: "Easy-to-revise notes", to: "/materials" },
+  { icon: <Star className="h-6 w-6" />, title: "VVIMP Questions", text: "Exam priority guides", to: "/vvimp-store" },
+  { icon: <Code className="h-6 w-6" />, title: "Projects", text: "Microprojects and more", to: "/projects" },
+  { icon: <CalendarDays className="h-6 w-6" />, title: "Exam Timetable", text: "Paper dates and timings", to: "/exam-timetable" },
+  { icon: <Briefcase className="h-6 w-6" />, title: "Internship", text: "Apply and track", to: "/internship" },
+  { icon: <LayoutDashboard className="h-6 w-6" />, title: "Student Dashboard", text: "Your learning in one place", to: "/open-dashboard" },
+];
+
+const FEATURES = [
+  {
+    icon: <BookOpen className="h-6 w-6" />,
+    title: "Comprehensive Study Materials",
+    text: "Access PDFs, PPTs, videos, and handwritten notes organized by branch, semester, and subject with advanced search capabilities.",
+  },
+  {
+    icon: <Users className="h-6 w-6" />,
+    title: "10 Engineering Branches",
+    text: "Complete coverage across Computer, IT, Mechanical, Electrical, Civil, ENTC, Automobile, Instrumentation, AIML, and Mechatronics engineering branches.",
+  },
+  {
+    icon: <Award className="h-6 w-6" />,
+    title: "6 Semester Structure",
+    text: "Organized semester-wise content with MSBTE K-Scheme subjects, quizzes, and progress tracking.",
+  },
+  {
+    icon: <Code className="h-6 w-6" />,
+    title: "Project Management",
+    text: "Showcase your projects, collaborate with peers, and build your portfolio with our integrated project system.",
+  },
+  {
+    icon: <Target className="h-6 w-6" />,
+    title: "Secure & Reliable",
+    text: "Enterprise-grade security with role-based access control, ensuring your data is always protected.",
+  },
+  {
+    icon: <Smartphone className="h-6 w-6" />,
+    title: "24/7 Access",
+    text: "Access your learning materials anytime, anywhere with our responsive web platform and mobile optimization.",
+  },
+];
+
+const TESTIMONIALS = [
+  {
+    name: "Karan Jadhav",
+    role: "Vidya Prathisha Indapur",
+    text: "DigiDiploma has completely transformed how I study. The organized materials and project showcase features are incredible!",
+  },
+  {
+    name: "Tanishka Pokharkar",
+    role: "Government Polytechnic, Awasari (khurd)",
+    text: "The branch-specific content and semester organization make it so easy to find exactly what I need for my studies.",
+  },
+  {
+    name: "Aditya Hule",
+    role: "Government Polytechnic, Awasari (khurd)",
+    text: "I love how I can access study materials 24/7 and collaborate on projects with my classmates. Highly recommended!",
+  },
+];
+
+const FAQS = [
+  {
+    q: "What is DigiDiploma and who is it for?",
+    a: "DigiDiploma is a comprehensive digital learning platform designed specifically for diploma and engineering students. It provides free study materials, project resources, course management, and a collaborative community. Whether you're studying Computer Engineering, Mechanical, Civil, or any other branch, DigiDiploma has resources tailored to your needs.",
+  },
+  {
+    q: "Are the study materials really free?",
+    a: "Yes! All study materials including PDFs, PPTs, videos, and handwritten notes are completely free. We believe in making quality education accessible to everyone. You can browse materials by branch, semester, and subject without any cost.",
+  },
+  {
+    q: "Which engineering branches are supported?",
+    a: "We support all major engineering branches including Computer Engineering, Information Technology, Mechanical, Electrical, Civil, ENTC, Automobile, Instrumentation, AIML, and Mechatronics Engineering. Each branch has dedicated resources organized by semester and subject.",
+  },
+  {
+    q: "How do I create an account?",
+    a: "Creating an account is simple and free! Click on the \"Login\" button, then select \"Create Account\". Fill in your details including your name, email, enrollment number, college, branch, and semester. Once registered, you'll have full access to all features and materials.",
+  },
+  {
+    q: "Can I download materials for offline use?",
+    a: "Yes, you can download PDFs, PPTs, and other study materials directly to your device for offline access. This allows you to study anytime, anywhere, even without an internet connection. Simply click the download button on any material you want to save.",
+  },
+  {
+    q: "Is there a community or forum for students?",
+    a: "Absolutely! We have an active WhatsApp community where students can connect, share resources, discuss projects, and help each other. You can join our community through the \"Join Community\" button on the homepage. It's a great place to network and collaborate with fellow students.",
+  },
+  {
+    q: "Is my personal information secure?",
+    a: "Your privacy and security are our top priorities. We use industry-standard encryption to protect your data, and we never share your personal information with third parties. Your account is password-protected, and you have full control over your profile information.",
+  },
+  {
+    q: "Can I access DigiDiploma on mobile devices?",
+    a: "Yes! DigiDiploma is fully responsive and works seamlessly on smartphones, tablets, and desktops. You can access all features, browse materials, and manage your courses from any device. The mobile-friendly interface ensures a great experience on the go.",
+  },
+];
+
+// Guides for the current (odd-semester) exam season, shown on the home page
+const FEATURED_GUIDES = VVIMP_PRODUCTS.filter((p) => p.semester % 2 === 1).slice(0, 3);
+
+interface PublicNotice {
+  _id?: string;
+  id?: string;
+  title?: string;
+  message?: string;
+}
+
 const Index = () => {
-  const [currentState, setCurrentState] = useState<'home' | 'branches'>('home');
-  const { toast } = useToast();
   const navigate = useNavigate();
-  const [notices, setNotices] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    students: 1250,
-    faculty: 45,
-    courses: 120,
-    materials: 850
-  });
+  const [notices, setNotices] = useState<PublicNotice[]>([]);
   const [showWhatsAppPopup, setShowWhatsAppPopup] = useState(true);
-  const [popupEntered, setPopupEntered] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [libraryTab, setLibraryTab] = useState<"branch" | "type">("branch");
 
-  // Typing effect for "Welcome to DigiDiploma"
-  const typingText = useTypingEffect({
-    text: "Welcome to DigiDiploma",
-    speed: 100,
-    deleteSpeed: 50,
-    pauseTime: 2000,
-    pauseAfterDelete: 500,
-  });
-
-  // Launch a lightweight confetti burst when popup opens
   useEffect(() => {
-    if (!showWhatsAppPopup) return;
-    setPopupEntered(false);
-    const raf = requestAnimationFrame(() => setPopupEntered(true));
-
-    // Minimal canvas confetti implementation
-    const durationMs = 1000;
-    const end = Date.now() + durationMs;
-    const colors = ["#60A5FA", "#818CF8", "#A78BFA", "#34D399", "#FBBF24"]; // blue/indigo themed
-
-    const canvas = document.createElement('canvas');
-    canvas.style.position = 'fixed';
-    canvas.style.inset = '0';
-    canvas.style.pointerEvents = 'none';
-    canvas.style.zIndex = '9999';
-    document.body.appendChild(canvas);
-    const ctx = canvas.getContext('2d');
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener('resize', resize);
-
-    const particles = Array.from({ length: 120 }).map(() => ({
-      x: canvas.width / 2,
-      y: canvas.height / 3,
-      vx: (Math.random() - 0.5) * 8,
-      vy: (Math.random() - 1.2) * 10,
-      g: 0.25 + Math.random() * 0.2,
-      size: 3 + Math.random() * 4,
-      color: colors[(Math.random() * colors.length) | 0],
-      rotation: Math.random() * Math.PI,
-      vr: (Math.random() - 0.5) * 0.2
-    }));
-
-    let frameId;
-    const draw = () => {
-      const now = Date.now();
-      if (!ctx) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += p.g;
-        p.rotation += p.vr;
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rotation);
-        ctx.fillStyle = p.color;
-        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-        ctx.restore();
-      });
-      if (now < end) {
-        frameId = requestAnimationFrame(draw);
-      } else {
-        cleanup();
+    const fetchNotices = async () => {
+      try {
+        const res = await fetch("/api/notices/public");
+        const data = await res.json();
+        setNotices(Array.isArray(data) ? data : []);
+      } catch {
+        setNotices([]);
       }
     };
-    frameId = requestAnimationFrame(draw);
-
-    const cleanup = () => {
-      cancelAnimationFrame(frameId);
-      window.removeEventListener('resize', resize);
-      canvas.remove();
-    };
-
-    return () => {
-      cancelAnimationFrame(raf);
-      cleanup();
-    };
-  }, [showWhatsAppPopup]);
-
-  useEffect(() => {
-    // Always fetch public data for landing page
     fetchNotices();
-    // Stats are kept static: 1250+ Active Students, 45+ Faculty Members, 120+ Courses Available, 850+ Study Materials
   }, []);
 
-  const fetchNotices = async () => {
-    try {
-      const res = await fetch("/api/notices/public");
-      const data = await res.json();
-      setNotices(data);
-    } catch (err) {
-      setNotices([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
-  const handleBranchSelect = (branchNameOrId: string) => {
-    // BranchSelection may pass id (e.g. 'computer'); map to full name for Materials page URL
-    const nameMap: Record<string, string> = {
-      computer: 'Computer Engineering',
-      it: 'Information Technology',
-      electronics: 'Electronics & Telecommunication',
-      mechanical: 'Mechanical Engineering',
-      electrical: 'Electrical Engineering',
-      civil: 'Civil Engineering',
-      automobile: 'Automobile Engineering',
-      instrumentation: 'Instrumentation Engineering',
-      aiml: 'Artificial Intelligence & Machine Learning (AIML)',
-      mechatronics: 'Mechatronics Engineering'
-    };
-    const branchName = nameMap[branchNameOrId] || branchNameOrId;
-    toast({ title: "Branch Selected", description: "Opening materials for your branch..." });
-    navigate(`/materials?branch=${encodeURIComponent(branchName)}`);
-  };
+  const latestNotice = notices[0];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Enhanced Navigation Bar */}
-      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/50 shadow-sm relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
-                <img
-                  src="/icons/android-chrome-512x512.png"
-                  alt="DigiDiploma logo"
-                  className="w-10 h-10 rounded-xl shadow-lg object-contain"
-                />
-                <div>
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                    DigiDiploma
-                  </h1>
-                </div>
-              </div>
-            </div>
+    <div className="dd">
+      <ScrollProgress />
+      <SiteNav />
 
-            <div className="hidden md:flex items-center space-x-8">
-              <Link to="/" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
-                Home
-              </Link>
-              <Link to="/materials" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
-                Materials
-              </Link>
-              <Link to="/projects" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
-                Projects
-              </Link>
-              <Link to="/vvimp-store" className="text-blue-700 hover:text-blue-800 font-semibold transition-colors">
-                VVIMP Store
-              </Link>
-              <a href="/internship" target="_blank" rel="noopener noreferrer" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
-                Internship
-              </a>
-              <Link to="/about" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
-                About
-              </Link>
-              <Link to="/contact" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
-                Contact
-              </Link>
-              <Button
-                variant="outline"
-                onClick={() => window.open('https://chat.whatsapp.com/BXyJ9ykaMnKKyHokiz2lII?mode=hqrt2', '_blank')}
-                className="border-green-600 text-green-600 hover:bg-green-50"
-              >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Join Community
-              </Button>
-            </div>
-
-            <div className="md:hidden">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="touch-manipulation"
-                style={{ WebkitTapHighlightColor: 'transparent' }}
-              >
-                <Menu className="w-5 h-5" />
-              </Button>
-            </div>
-
-            {/* Mobile Menu Dropdown */}
-            {mobileMenuOpen && (
-              <div className="absolute top-16 left-0 right-0 bg-white border-b border-slate-200 shadow-lg md:hidden z-50">
-                <div className="flex flex-col py-2">
-                  <Link
-                    to="/"
-                    className="group relative px-4 py-3 text-slate-700 font-medium transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-600 hover:shadow-sm hover:scale-[1.02] hover:pl-6"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <span className="relative z-10">Home</span>
-                    <span className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                  </Link>
-                  <Link
-                    to="/materials"
-                    className="group relative px-4 py-3 text-slate-700 font-medium transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-600 hover:shadow-sm hover:scale-[1.02] hover:pl-6"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <span className="relative z-10">Materials</span>
-                    <span className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                  </Link>
-                  <Link
-                    to="/projects"
-                    className="group relative px-4 py-3 text-slate-700 font-medium transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-600 hover:shadow-sm hover:scale-[1.02] hover:pl-6"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <span className="relative z-10">Projects</span>
-                    <span className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                  </Link>
-                  <Link
-                    to="/vvimp-store"
-                    className="group relative px-4 py-3 text-blue-700 font-semibold transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-600 hover:shadow-sm hover:scale-[1.02] hover:pl-6"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <span className="relative z-10">VVIMP Store</span>
-                    <span className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                  </Link>
-                  <a
-                    href="/internship"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group relative px-4 py-3 text-slate-700 font-medium transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-600 hover:shadow-sm hover:scale-[1.02] hover:pl-6"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <span className="relative z-10">Internship</span>
-                    <span className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                  </a>
-                  <Link
-                    to="/about"
-                    className="group relative px-4 py-3 text-slate-700 font-medium transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-600 hover:shadow-sm hover:scale-[1.02] hover:pl-6"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <span className="relative z-10">About</span>
-                    <span className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                  </Link>
-                  <Link
-                    to="/contact"
-                    className="group relative px-4 py-3 text-slate-700 font-medium transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-600 hover:shadow-sm hover:scale-[1.02] hover:pl-6"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <span className="relative z-10">Contact</span>
-                    <span className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                  </Link>
-                  <div className="border-t border-slate-200 mt-2 pt-2 px-4 pb-2">
-                    {/* Login removed in public build */}
-                    <button
-                      onClick={() => {
-                        window.open('https://chat.whatsapp.com/BXyJ9ykaMnKKyHokiz2lII?mode=hqrt2', '_blank');
-                        setMobileMenuOpen(false);
-                      }}
-                      className="w-full px-4 py-2.5 border border-green-600 text-green-600 rounded-lg font-medium text-sm transition-all duration-300 hover:bg-green-50 hover:border-green-700 hover:text-green-700 hover:shadow-md hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98] flex items-center justify-center group"
-                    >
-                      <MessageCircle className="w-4 h-4 mr-2 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
-                      Join Community
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
+      {/* Latest notice strip (only when a notice is published) */}
+      {latestNotice?.title ? (
+        <div className="border-b border-[var(--dd-line)] bg-[var(--dd-blue-soft)]">
+          <div className="dd-container flex items-center justify-center gap-2 py-2.5 text-center text-sm text-[var(--dd-blue-dark)]">
+            <Bell className="h-4 w-4 flex-shrink-0" />
+            <span className="font-semibold">{latestNotice.title}</span>
+            {latestNotice.message ? <span className="hidden truncate sm:inline">· {latestNotice.message}</span> : null}
           </div>
         </div>
-      </nav>
+      ) : null}
 
-      {/* Enhanced Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 py-20">
-        <FloatingBooksBackground />
-        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-20"></div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 mb-8 border border-white/20">
-              <Sparkles className="w-5 h-5 text-yellow-300" />
-              <span className="text-white font-medium">Revolutionizing Digital Education</span>
-              <Star className="w-4 h-4 text-yellow-300" />
-            </div>
-
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-              <span className="block">
-                <span
-                  className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent inline-block"
-                  style={{
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    paddingLeft: '2px',
-                    marginLeft: '-2px'
-                  }}
-                >
-                  {typingText}
-                </span>
-                <span className="animate-pulse text-white">|</span>
+      {/* ================= HERO ================= */}
+      <section className="dd-hero pb-16 pt-14 sm:pt-20 md:pb-24">
+        {/* Decorative floating chips (large screens) */}
+        <div className="dd-container relative hidden xl:block" aria-hidden>
+          <div className="dd-chip" style={{ left: 0, top: 40, ["--r" as string]: "-6deg" }}>
+            <span style={{ background: "#dbeafe", color: "#2563eb" }}><FileText className="h-4 w-4" /></span>
+            Notes &amp; PDFs
+          </div>
+          <div className="dd-chip" style={{ left: 40, top: 250, animationDelay: "1.2s", ["--r" as string]: "4deg" }}>
+            <span style={{ background: "#fef3c7", color: "#d97706" }}><Star className="h-4 w-4" /></span>
+            VVIMP Guides
+          </div>
+          <div className="dd-chip" style={{ right: 0, top: 60, animationDelay: "0.6s", ["--r" as string]: "5deg" }}>
+            <span style={{ background: "#ede9fe", color: "#7c3aed" }}><Code className="h-4 w-4" /></span>
+            Free Projects
+          </div>
+          <div className="dd-chip" style={{ right: 50, top: 260, animationDelay: "1.8s", ["--r" as string]: "-4deg" }}>
+            <span style={{ background: "#dcfce7", color: "#16a34a" }}><CalendarDays className="h-4 w-4" /></span>
+            Exam Timetable
+          </div>
+        </div>
+        <div className="dd-container text-center">
+          <Reveal>
+            <span className="dd-eyebrow">MSBTE K-Scheme · Diploma &amp; Engineering</span>
+            <h1 className="dd-h1 mx-auto mt-6 max-w-4xl">
+              Study Smarter,{" "}
+              <span className="dd-underline">
+                <span className="dd-accent-grad">Score Better!</span>
+                <svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden>
+                  <path d="M4 14 C 60 2, 120 20, 180 9 S 270 6, 296 12" />
+                </svg>
               </span>
             </h1>
-
-            <p className="text-xl md:text-2xl text-blue-100 mb-12 max-w-4xl mx-auto leading-relaxed">
-              All your Diploma & Engineering free resources, affordable courses in one place with huge community
+            <p className="dd-lead mx-auto mt-6 max-w-2xl">
+              All your Diploma &amp; Engineering free resources, affordable courses in one place with huge community
             </p>
-
-            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-              <Button
-                size="lg"
-                onClick={() => navigate('/open-dashboard')}
-                className="bg-white text-blue-600 hover:bg-blue-50 h-14 px-8 text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300"
-              >
-                <BookOpen className="w-6 h-6 mr-3" />
+            <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <button onClick={() => navigate("/open-dashboard")} className="dd-btn dd-btn-dark w-full sm:w-auto">
+                <Rocket className="h-5 w-5" />
                 Go to Dashboard
-                <ArrowRight className="w-6 h-6 ml-3" />
-              </Button>
-              <Button
-                size="lg"
-                onClick={() => navigate('/materials')}
-                className="bg-black text-white hover:bg-gray-800 h-14 px-8 text-lg font-bold border-2 border-black"
-              >
-                <Download className="w-6 h-6 mr-3" />
+              </button>
+              <button onClick={() => navigate("/materials")} className="dd-btn dd-btn-outline w-full sm:w-auto">
+                <Download className="h-5 w-5" />
                 Get Free Resources
-              </Button>
-              <Button
-                size="lg"
-                onClick={() => navigate('/projects')}
-                className="bg-emerald-600 text-white hover:bg-emerald-700 h-14 px-8 text-lg font-bold border-2 border-emerald-700"
-              >
-                <Download className="w-6 h-6 mr-3" />
-                Download Free Projects
-              </Button>
+              </button>
             </div>
+            <Link to="/projects" className="dd-link mt-5">
+              Download Free Projects <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Reveal>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">{stats.students}+</div>
-                <div className="text-blue-200 text-sm">Active Students</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">{stats.faculty}+</div>
-                <div className="text-blue-200 text-sm">Faculty Members</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">{stats.courses}+</div>
-                <div className="text-blue-200 text-sm">Courses Available</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-white mb-2">{stats.materials}+</div>
-                <div className="text-blue-200 text-sm">Study Materials</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      {/* WhatsApp Join Popup */}
-      <Dialog open={showWhatsAppPopup} onOpenChange={setShowWhatsAppPopup}>
-        <DialogContent className={`sm:max-w-md p-0 overflow-hidden rounded-3xl border-0 shadow-[0_24px_100px_-30px_rgba(37,99,235,0.55)] fixed left-1/2 -translate-x-1/2 top-8 sm:top-12 transform transition-all duration-300 ${popupEntered ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-2'}`}>
-          <DialogHeader className="p-0">
-            <DialogTitle className="sr-only">Join our Group for IMPs</DialogTitle>
-            <DialogDescription className="sr-only">Get exam updates and important questions. Join our WhatsApp community.</DialogDescription>
-          </DialogHeader>
-          <div className="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 px-8 pt-8 pb-7 text-white">
-            <div className="absolute inset-0 opacity-20" aria-hidden>
-              <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/20 rounded-full blur-3xl"></div>
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full blur-2xl"></div>
-            </div>
-            <div className="relative mx-auto mb-5 flex h-18 w-18 items-center justify-center rounded-full bg-[#25D366] shadow-xl ring-1 ring-white/20">
-              <div className="absolute -inset-3 -z-10 rounded-full bg-[#25D366] blur-2xl opacity-50"></div>
-              <img
-                src="https://cdn.simpleicons.org/whatsapp/FFFFFF"
-                alt="WhatsApp"
-                className="h-10 w-10 drop-shadow"
-                loading="eager"
-                decoding="async"
-              />
-            </div>
-            <div className="relative text-center">
-              <div className="inline-flex items-center justify-center rounded-full bg-white/15 px-3 py-1 text-xs font-semibold tracking-wide ring-1 ring-white/20">
-                Exclusive Community
-              </div>
-              <h3 className="mt-3 text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Join our Group for IMPs</h3>
-              <p className="mt-2 text-white/90 text-sm sm:text-base max-w-md mx-auto">
-                Get all exam updates and study metarials with important questions.
-              </p>
-            </div>
-          </div>
-          <div className="bg-white p-6 sm:p-7">
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button
-                className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg"
-                onClick={() => {
-                  window.open('https://chat.whatsapp.com/BXyJ9ykaMnKKyHokiz2lII?mode=hqrt2', '_blank');
-                  setShowWhatsAppPopup(false);
-                }}
-              >
-                Join Now
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-              <Button
-                variant="outline"
-                className="flex-1 border-slate-200 hover:bg-slate-50"
-                onClick={() => setShowWhatsAppPopup(false)}
-              >
-                Already Joined
-              </Button>
-            </div>
-            <p className="mt-4 text-center text-xs text-slate-500">No spam. Community announcements only.</p>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Branch Selection Panel */}
-      {currentState === 'branches' && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="max-w-4xl mx-auto">
-            <BranchSelection
-              onBranchSelect={handleBranchSelect}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Features Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">
-              Why Choose DigiDiploma?
-            </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Experience the future of education with our comprehensive digital platform designed specifically for diploma students.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <FeatureCard
-              icon={<BookOpen className="w-8 h-8" />}
-              title="Comprehensive Study Materials"
-              description="Access PDFs, PPTs, videos, and handwritten notes organized by branch, semester, and subject with advanced search capabilities."
-              color="blue"
-            />
-            <FeatureCard
-              icon={<Users className="w-8 h-8" />}
-              title="10 Engineering Branches"
-              description="Complete coverage across Computer, IT, Mechanical, Electrical, Civil, ENTC, Automobile, Instrumentation, AIML, and Mechatronics engineering branches."
-              color="green"
-            />
-            <FeatureCard
-              icon={<Award className="w-8 h-8" />}
-              title="6 Semester Structure"
-              description="Organized semester-wise content with MSBTE K-Scheme subjects, quizzes, and progress tracking."
-              color="purple"
-            />
-            <FeatureCard
-              icon={<Code className="w-8 h-8" />}
-              title="Project Management"
-              description="Showcase your projects, collaborate with peers, and build your portfolio with our integrated project system."
-              color="orange"
-            />
-            <FeatureCard
-              icon={<Target className="w-8 h-8" />}
-              title="Secure & Reliable"
-              description="Enterprise-grade security with role-based access control, ensuring your data is always protected."
-              color="red"
-            />
-            <FeatureCard
-              icon={<Star className="w-8 h-8" />}
-              title="24/7 Access"
-              description="Access your learning materials anytime, anywhere with our responsive web platform and mobile optimization."
-              color="indigo"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Branch Overview Section */}
-      <section className="py-20 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">
-              Available Engineering Branches
-            </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Choose from our comprehensive range of diploma engineering programs designed for the modern industry.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {ALL_BRANCHES.map((branchName) => {
-              const config = BRANCH_CARD_CONFIG[branchName] || {
-                icon: <BookOpen className="w-8 h-8" />,
-                description: "Study materials for this branch.",
-                subjects: ["Materials"],
-                color: "blue"
-              };
-              return (
-                <BranchCard
-                  key={branchName}
-                  icon={config.icon}
-                  title={branchName}
-                  description={config.description}
-                  subjects={config.subjects}
-                  color={config.color}
-                  onClick={() => navigate(`/materials?branch=${encodeURIComponent(branchName)}`)}
-                />
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">
-              What Our Students Say
-            </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Hear from students who have transformed their learning experience with DigiDiploma.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <TestimonialCard
-              name="Karan Jadhav"
-              role="Vidya Prathisha Indapur"
-              text="DigiDiploma has completely transformed how I study. The organized materials and project showcase features are incredible!"
-              rating={5}
-            />
-            <TestimonialCard
-              name="Tanishka Pokharkar"
-              role="Government Polytechnic, Awasari (khurd)"
-              text="The branch-specific content and semester organization make it so easy to find exactly what I need for my studies."
-              rating={5}
-            />
-            <TestimonialCard
-              name="Aditya Hule"
-              role="Government Polytechnic, Awasari (khurd)"
-              text="I love how I can access study materials 24/7 and collaborate on projects with my classmates. Highly recommended!"
-              rating={5}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Enhanced FAQ Section */}
-      <section className="py-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-blue-100 rounded-full px-6 py-2 mb-4">
-              <HelpCircle className="w-5 h-5 text-blue-600" />
-              <span className="text-blue-600 font-medium">Frequently Asked Questions</span>
-            </div>
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">
-              Got Questions? We've Got Answers
-            </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Everything you need to know about DigiDiploma and how it can transform your learning journey.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            <Accordion type="single" collapsible className="w-full space-y-4">
-              <AccordionItem value="item-1" className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                  <div className="flex items-center gap-3 text-left">
-                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <GraduationCap className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <span className="font-semibold text-slate-900">What is DigiDiploma and who is it for?</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4 text-slate-600">
-                  <p className="leading-relaxed">
-                    DigiDiploma is a comprehensive digital learning platform designed specifically for diploma and engineering students.
-                    It provides free study materials, project resources, course management, and a collaborative community.
-                    Whether you're studying Computer Engineering, Mechanical, Civil, or any other branch, DigiDiploma has resources tailored to your needs.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-2" className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                  <div className="flex items-center gap-3 text-left">
-                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <FileText className="w-5 h-5 text-green-600" />
-                    </div>
-                    <span className="font-semibold text-slate-900">Are the study materials really free?</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4 text-slate-600">
-                  <p className="leading-relaxed">
-                    Yes! All study materials including PDFs, PPTs, videos, and handwritten notes are completely free.
-                    We believe in making quality education accessible to everyone. You can browse materials by branch, semester, and subject without any cost.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-3" className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                  <div className="flex items-center gap-3 text-left">
-                    <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Code className="w-5 h-5 text-purple-600" />
-                    </div>
-                    <span className="font-semibold text-slate-900">Which engineering branches are supported?</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4 text-slate-600">
-                  <p className="leading-relaxed">
-                    We support all major engineering branches including Computer Engineering, Information Technology,
-                    Mechanical, Electrical, Civil, ENTC, Automobile, Instrumentation, AIML, and Mechatronics Engineering.
-                    Each branch has dedicated resources organized by semester and subject.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-4" className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                  <div className="flex items-center gap-3 text-left">
-                    <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <User className="w-5 h-5 text-orange-600" />
-                    </div>
-                    <span className="font-semibold text-slate-900">How do I create an account?</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4 text-slate-600">
-                  <p className="leading-relaxed">
-                    Creating an account is simple and free! Click on the "Login" button, then select "Create Account".
-                    Fill in your details including your name, email, enrollment number, college, branch, and semester.
-                    Once registered, you'll have full access to all features and materials.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-            <Accordion type="single" collapsible className="w-full space-y-4">
-              <AccordionItem value="item-5" className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                  <div className="flex items-center gap-3 text-left">
-                    <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Download className="w-5 h-5 text-indigo-600" />
-                    </div>
-                    <span className="font-semibold text-slate-900">Can I download materials for offline use?</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4 text-slate-600">
-                  <p className="leading-relaxed">
-                    Yes, you can download PDFs, PPTs, and other study materials directly to your device for offline access.
-                    This allows you to study anytime, anywhere, even without an internet connection.
-                    Simply click the download button on any material you want to save.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-6" className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                  <div className="flex items-center gap-3 text-left">
-                    <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Users className="w-5 h-5 text-pink-600" />
-                    </div>
-                    <span className="font-semibold text-slate-900">Is there a community or forum for students?</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4 text-slate-600">
-                  <p className="leading-relaxed">
-                    Absolutely! We have an active WhatsApp community where students can connect, share resources,
-                    discuss projects, and help each other. You can join our community through the "Join Community" button
-                    on the homepage. It's a great place to network and collaborate with fellow students.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-7" className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                  <div className="flex items-center gap-3 text-left">
-                    <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Lock className="w-5 h-5 text-yellow-600" />
-                    </div>
-                    <span className="font-semibold text-slate-900">Is my personal information secure?</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4 text-slate-600">
-                  <p className="leading-relaxed">
-                    Your privacy and security are our top priorities. We use industry-standard encryption to protect your data,
-                    and we never share your personal information with third parties. Your account is password-protected,
-                    and you have full control over your profile information.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-8" className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                  <div className="flex items-center gap-3 text-left">
-                    <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Globe className="w-5 h-5 text-teal-600" />
-                    </div>
-                    <span className="font-semibold text-slate-900">Can I access DigiDiploma on mobile devices?</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4 text-slate-600">
-                  <p className="leading-relaxed">
-                    Yes! DigiDiploma is fully responsive and works seamlessly on smartphones, tablets, and desktops.
-                    You can access all features, browse materials, and manage your courses from any device.
-                    The mobile-friendly interface ensures a great experience on the go.
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
-
-          <div className="text-center mt-12">
-            <p className="text-slate-600 mb-4">Still have questions?</p>
-            <Button
-              onClick={() => navigate('/contact')}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
-            >
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Contact Us
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Call-to-Action Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
-            Ready to Transform Your Learning Experience?
-          </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
-            Join thousands of students who have already discovered the power of digital education with DigiDiploma.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Button
-              size="lg"
-              onClick={() => navigate('/open-dashboard')}
-              className="bg-white text-blue-600 hover:bg-blue-50 h-14 px-8 text-lg font-semibold shadow-xl"
-            >
-              <BookOpen className="w-6 h-6 mr-3" />
-              Go to Dashboard
-            </Button>
-            <Button
-              size="lg"
-              onClick={() => navigate('/contact')}
-              className="bg-black text-white hover:bg-gray-800 h-14 px-8 text-lg font-bold border-2 border-black"
-            >
-              <Phone className="w-6 h-6 mr-3" />
-              Get Support
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Enhanced Footer */}
-      <footer className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          {/* Main Footer Content */}
-          <div className="grid md:grid-cols-4 gap-8 mb-12">
-            {/* Brand Section */}
-            <div className="col-span-1 md:col-span-2">
-              <div className="flex items-center space-x-4 mb-6">
-                <img
-                  src="/icons/android-chrome-512x512.png"
-                  alt="DigiDiploma logo"
-                  className="w-12 h-12 rounded-2xl object-contain shadow-lg"
-                />
-                <div>
-                  <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
-                    DigiDiploma
-                  </h3>
-                  <p className="text-slate-300 text-sm">Revolutionizing Digital Education</p>
+          {/* Stats */}
+          <Reveal delay={0.1}>
+            <div className="dd-card dd-stats mx-auto mt-14 grid max-w-4xl grid-cols-2 md:grid-cols-4">
+              {STATS.map((s, i) => (
+                <div
+                  key={s.label}
+                  className={`px-4 py-7 ${i % 2 === 1 ? "" : "border-r"} ${i < 2 ? "border-b md:border-b-0" : ""} ${i < 3 ? "md:border-r" : "md:border-r-0"} border-[var(--dd-line)]`}
+                >
+                  <div className="mx-auto mb-3 flex justify-center text-[var(--dd-blue)]">{s.icon}</div>
+                  <Counter value={s.value} suffix="+" className="dd-display block text-3xl font-extrabold" />
+                  <div className="mt-1 text-sm text-[var(--dd-mute)]">{s.label}</div>
                 </div>
-              </div>
-              <p className="text-slate-300 mb-6 max-w-md leading-relaxed">
-                Empowering diploma students with comprehensive study materials, project management, and interactive learning resources. Experience the future of education with our advanced digital platform.
-              </p>
-
-              {/* Social Media Links */}
-              <div className="flex space-x-3">
-                <SocialLink
-                  href="https://www.instagram.com/digi_diploma.in?igsh=eHM5MjZteHVmbjlv"
-                  icon={<Instagram className="w-5 h-5" />}
-                  label="Instagram"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                />
-                <SocialLink
-                  href="https://chat.whatsapp.com/BXyJ9ykaMnKKyHokiz2lII?mode=hqrt2"
-                  icon={<MessageCircle className="w-5 h-5" />}
-                  label="WhatsApp"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                />
-                <SocialLink
-                  href="https://t.me/digidiploma"
-                  icon={
-                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
-                    </svg>
-                  }
-                  label="Telegram"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                />
-                <SocialLink
-                  href="https://www.linkedin.com/in/chaitanya-zagade-766051294?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
-                  icon={<Linkedin className="w-5 h-5" />}
-                  label="LinkedIn"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                />
-                <SocialLink
-                  href="https://www.youtube.com/@DigiDiploma"
-                  icon={<Youtube className="w-5 h-5" />}
-                  label="YouTube"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                />
-              </div>
+              ))}
             </div>
+          </Reveal>
 
-            {/* Quick Links */}
-            <div>
-              <h4 className="text-lg font-semibold mb-6 text-white">Quick Links</h4>
-              <ul className="space-y-3">
-                <li>
-                  <Link to="/" className="text-slate-300 hover:text-blue-400 transition-colors duration-200 flex items-center">
-                    <ArrowRight className="w-3 h-3 mr-2" />
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/about" className="text-slate-300 hover:text-blue-400 transition-colors duration-200 flex items-center">
-                    <ArrowRight className="w-3 h-3 mr-2" />
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/contact" className="text-slate-300 hover:text-blue-400 transition-colors duration-200 flex items-center">
-                    <ArrowRight className="w-3 h-3 mr-2" />
-                    Contact
-                  </Link>
-                </li>
-                <li>
-                  {/* Login link removed in public build */}
-                </li>
-              </ul>
+          <Reveal delay={0.15}>
+            <p className="mt-10 text-sm font-semibold uppercase tracking-wider text-[var(--dd-mute)]">
+              Built for MSBTE K-Scheme diploma students
+            </p>
+            <div className="dd-ticker mx-auto mt-5 max-w-4xl">
+              {[0, 1].map((copy) => (
+                <div key={copy} className="dd-ticker-track" aria-hidden={copy === 1}>
+                  {ALL_BRANCHES.map((b) => (
+                    <Link
+                      key={b}
+                      to={`/materials?branch=${encodeURIComponent(b)}`}
+                      className="dd-ticker-item"
+                      tabIndex={copy === 1 ? -1 : undefined}
+                    >
+                      <GraduationCap className="h-4 w-4 text-[var(--dd-blue)]" />
+                      {b}
+                    </Link>
+                  ))}
+                </div>
+              ))}
             </div>
+          </Reveal>
+        </div>
+      </section>
 
-            {/* Contact Information */}
-            <div>
-              <h4 className="text-lg font-semibold mb-6 text-white">Contact Information</h4>
-              <ul className="space-y-4">
-                <li className="flex items-start text-slate-300">
-                  <MapPin className="w-5 h-5 mr-3 mt-0.5 text-blue-400 flex-shrink-0" />
-                  <div>
-                    <p className="font-medium">Location</p>
-                    <p className="text-sm">Pune, Maharashtra, India</p>
+      {/* ================= 3 STEPS ================= */}
+      <section className="dd-section dd-soft">
+        <div className="dd-container">
+          <Reveal className="dd-section-head">
+            <span className="dd-eyebrow">How it works</span>
+            <h2 className="dd-h2">
+              Your Path to Success in <span className="dd-accent-grad">3 Easy Steps</span>
+            </h2>
+            <p className="dd-lead">From finding your subject to exam day, everything is a few taps away.</p>
+          </Reveal>
+          <div className="dd-steps grid gap-6 md:grid-cols-3">
+            {STEPS.map((s, i) => (
+              <Reveal key={s.title} delay={0.06 * i}>
+                <div className="dd-card h-full p-8 text-center">
+                  <div className="dd-step mx-auto w-fit">
+                    <div className="dd-icon dd-icon-round">{s.icon}</div>
+                    <span className="dd-step-num">{i + 1}</span>
                   </div>
-                </li>
-                <li className="flex items-start text-slate-300">
-                  <Mail className="w-5 h-5 mr-3 mt-0.5 text-blue-400 flex-shrink-0" />
-                  <div>
-                    <p className="font-medium">Email</p>
-                    <p className="text-sm">digidiploma06@gmail.com</p>
-                  </div>
-                </li>
-                <li className="flex items-start text-slate-300">
-                  <Phone className="w-5 h-5 mr-3 mt-0.5 text-blue-400 flex-shrink-0" />
-                  <div>
-                    <p className="font-medium">Phone</p>
-                    <p className="text-sm">+91 8432971897</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
+                  <h3 className="dd-h3 mt-5">{s.title}</h3>
+                  <p className="mt-2 leading-relaxed">{s.text}</p>
+                </div>
+              </Reveal>
+            ))}
           </div>
+        </div>
+      </section>
 
-          {/* Additional Footer Sections */}
-          <div className="grid md:grid-cols-3 gap-8 mb-12 pt-8 border-t border-slate-700">
-            {/* Features */}
-            <div>
-              <h4 className="text-lg font-semibold mb-4 text-white">Platform Features</h4>
-              <ul className="space-y-2 text-sm text-slate-300">
-                <li>• Study Materials Management</li>
-                <li>• Project Showcase</li>
-                <li>• Branch-wise Organization</li>
-                <li>• Semester Structure</li>
-                <li>• Interactive Learning</li>
-                <li>• Progress Tracking</li>
-              </ul>
+      {/* ================= SERVICES ================= */}
+      <section className="dd-section">
+        <div className="dd-container">
+          <Reveal className="dd-section-head">
+            <span className="dd-eyebrow">Our services</span>
+            <h2 className="dd-h2">
+              Everything You Need to <span className="dd-accent-grad">Succeed</span>
+            </h2>
+            <p className="dd-lead">Free study material, exam guides, projects and exam dates for diploma students.</p>
+          </Reveal>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {SERVICES.map((s, i) => (
+              <Reveal key={s.title} delay={0.05 * i}>
+                <Link to={s.to} className="dd-card dd-card-link dd-card-top flex h-full flex-col p-7">
+                  <div className="dd-icon">{s.icon}</div>
+                  <h3 className="dd-h3 mt-5">{s.title}</h3>
+                  <p className="mt-2 flex-1 leading-relaxed">{s.text}</p>
+                  <span className="dd-link mt-5">
+                    {s.cta} <ArrowRight className="h-4 w-4" />
+                  </span>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= COMMUNITY BAND ================= */}
+      <section className="dd-section dd-band">
+        <div className="dd-container grid items-center gap-12 lg:grid-cols-2">
+          <Reveal>
+            <span className="dd-eyebrow" style={{ background: "rgba(96,165,250,0.15)", color: "#93c5fd" }}>
+              Community
+            </span>
+            <h2 className="dd-h2 mt-4">Join Our Active Student Community</h2>
+            <p className="dd-lead mt-4 max-w-lg">
+              Get all exam updates and study materials with important questions, and learn together with students from
+              your branch.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <a href={WHATSAPP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer" className="dd-btn dd-btn-wa">
+                <MessageCircle className="h-5 w-5" />
+                WhatsApp
+              </a>
+              <a href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer" className="dd-btn dd-btn-tg">
+                <Phone className="h-5 w-5" />
+                Telegram
+              </a>
             </div>
-
-            {/* Branches */}
-            <div>
-              <h4 className="text-lg font-semibold mb-4 text-white">Branches Available</h4>
-              <ul className="space-y-2 text-sm text-slate-300">
-                {ALL_BRANCHES.map((branch, index) => (
-                  <li key={index}>• {branch}</li>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8">
+              <div className="mb-7 space-y-2.5 border-b border-white/10 pb-7" aria-hidden>
+                <div className="dd-bubble dd-bubble-in">Anyone has the Sem 5 notes?</div>
+                <div className="dd-bubble dd-bubble-out">Shared in the group just now ✅</div>
+                <div className="dd-bubble dd-bubble-in">Thanks! Exam timetable is out too 🎉</div>
+              </div>
+              <ul className="space-y-6">
+                {COMMUNITY_POINTS.map((p) => (
+                  <li key={p.title} className="flex gap-4">
+                    <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-[var(--dd-blue)] text-white">
+                      {p.icon}
+                    </span>
+                    <div>
+                      <h3 className="dd-h3">{p.title}</h3>
+                      <p className="mt-1 text-slate-300">{p.text}</p>
+                    </div>
+                  </li>
                 ))}
               </ul>
             </div>
+          </Reveal>
+        </div>
+      </section>
 
-            {/* Support */}
-            <div>
-              <h4 className="text-lg font-semibold mb-4 text-white">Support & Help</h4>
-              <ul className="space-y-2 text-sm text-slate-300">
-                <li>• 24/7 Technical Support</li>
-                <li>• User Documentation</li>
-                <li>• FAQ Section</li>
-                <li>• Video Tutorials</li>
-                <li>• Community Forum</li>
-                <li>• Feedback System</li>
+      {/* ================= RESOURCE LIBRARY ================= */}
+      <section className="dd-section">
+        <div className="dd-container">
+          <Reveal className="dd-section-head">
+            <span className="dd-eyebrow">Resources</span>
+            <h2 className="dd-h2">
+              Your Complete <span className="dd-accent-grad">Resource Library</span>
+            </h2>
+            <p className="dd-lead">Choose your branch, or jump straight to the kind of resource you need.</p>
+            <div className="dd-tabs mt-7" role="tablist" aria-label="Browse resources">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={libraryTab === "branch"}
+                className="dd-tab"
+                onClick={() => setLibraryTab("branch")}
+              >
+                By Branch
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={libraryTab === "type"}
+                className="dd-tab"
+                onClick={() => setLibraryTab("type")}
+              >
+                By Resource
+              </button>
+            </div>
+          </Reveal>
+
+          {libraryTab === "branch" ? (
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+              {ALL_BRANCHES.map((branchName) => {
+                const config = BRANCH_CARD_CONFIG[branchName];
+                return (
+                  <Link
+                    key={branchName}
+                    to={`/materials?branch=${encodeURIComponent(branchName)}`}
+                    className="dd-card dd-card-link flex h-full flex-col items-center p-5 text-center sm:p-6"
+                  >
+                    <span className="dd-icon dd-icon-round [&_svg]:h-6 [&_svg]:w-6">
+                      {config?.icon ?? <BookOpen className="h-6 w-6" />}
+                    </span>
+                    <h3 className="dd-h3 mt-4 text-base">{branchName}</h3>
+                    <p className="mt-1.5 hidden text-sm leading-snug text-[var(--dd-mute)] sm:block">
+                      {config?.subjects.slice(0, 2).join(" · ")}
+                    </p>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+              {RESOURCE_TYPES.map((r) => (
+                <Link
+                  key={r.title}
+                  to={r.to}
+                  className="dd-card dd-card-link flex h-full flex-col items-center p-5 text-center sm:p-6"
+                >
+                  <span className="dd-icon dd-icon-round">{r.icon}</span>
+                  <h3 className="dd-h3 mt-4 text-base">{r.title}</h3>
+                  <p className="mt-1.5 text-sm text-[var(--dd-mute)]">{r.text}</p>
+                </Link>
+              ))}
+            </div>
+          )}
+
+          <div className="mt-10 text-center">
+            <button onClick={() => navigate("/materials")} className="dd-btn dd-btn-blue">
+              View All Materials <ArrowRight className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= VVIMP GUIDES ================= */}
+      {FEATURED_GUIDES.length > 0 ? (
+        <section className="dd-section dd-soft">
+          <div className="dd-container">
+            <Reveal className="dd-section-head">
+              <span className="dd-eyebrow">Exam season</span>
+              <h2 className="dd-h2">
+                Explore Our <span className="dd-accent-grad">VVIMP Guides</span>
+              </h2>
+              <p className="dd-lead">Unit-wise exam priority guides for MSBTE K-Scheme papers.</p>
+            </Reveal>
+            <div className="grid gap-6 md:grid-cols-3">
+              {FEATURED_GUIDES.map((p, i) => (
+                <Reveal key={p.code} delay={0.06 * i}>
+                  <div className="dd-card flex h-full flex-col overflow-hidden">
+                    <div className="flex h-44 items-center justify-center bg-[var(--dd-blue-soft)]">
+                      <img
+                        src={`/vvimp-covers/${p.code}.jpg`}
+                        alt={`${p.name} VVIMP guide cover`}
+                        className="h-36 w-auto rounded-md object-contain shadow-md"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
+                    </div>
+                    <div className="flex flex-1 flex-col p-6">
+                      <div className="text-xs font-bold uppercase tracking-wider text-[var(--dd-blue)]">
+                        Semester {p.semester} · {p.code}
+                      </div>
+                      <h3 className="dd-h3 mt-2">{p.name}</h3>
+                      <p className="mt-1 text-sm text-[var(--dd-mute)]">{p.branchLabel}</p>
+                      <div className="mt-5 flex items-center justify-between pt-1">
+                        <span className="dd-display text-2xl font-extrabold">₹{p.price}</span>
+                        <a href={p.url} target="_blank" rel="noopener noreferrer" className="dd-btn dd-btn-dark dd-btn-sm">
+                          Get Now
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+            <div className="mt-10 text-center">
+              <Link to="/vvimp-store" className="dd-link">
+                View all VVIMP guides <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* ================= WHY CHOOSE ================= */}
+      <section className="dd-section">
+        <div className="dd-container">
+          <Reveal className="dd-section-head">
+            <span className="dd-eyebrow">Why DigiDiploma</span>
+            <h2 className="dd-h2">
+              Why Choose <span className="dd-accent-grad">DigiDiploma?</span>
+            </h2>
+            <p className="dd-lead">
+              Experience the future of education with our comprehensive digital platform designed specifically for
+              diploma students.
+            </p>
+          </Reveal>
+          <div className="grid gap-x-10 gap-y-9 md:grid-cols-2 lg:grid-cols-3">
+            {FEATURES.map((f, i) => (
+              <Reveal key={f.title} delay={0.04 * i}>
+                <div className="flex gap-4">
+                  <span className="dd-icon">{f.icon}</span>
+                  <div>
+                    <h3 className="dd-h3">{f.title}</h3>
+                    <p className="mt-1.5 leading-relaxed">{f.text}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= TESTIMONIALS ================= */}
+      <section className="dd-section dd-soft">
+        <div className="dd-container">
+          <Reveal className="dd-section-head">
+            <span className="dd-eyebrow">Student reviews</span>
+            <h2 className="dd-h2">
+              What Our <span className="dd-accent-grad">Students Say</span>
+            </h2>
+            <p className="dd-lead">
+              Hear from students who have transformed their learning experience with DigiDiploma.
+            </p>
+          </Reveal>
+          <div className="grid gap-6 md:grid-cols-3">
+            {TESTIMONIALS.map((t, i) => (
+              <Reveal key={t.name} delay={0.06 * i}>
+                <figure className="dd-card flex h-full flex-col p-7">
+                  <div className="flex gap-1 text-amber-400" aria-label="5 out of 5 stars">
+                    {[...Array(5)].map((_, s) => (
+                      <Star key={s} className="h-4 w-4 fill-current" />
+                    ))}
+                  </div>
+                  <blockquote className="mt-4 flex-1 text-[1.05rem] leading-relaxed text-[var(--dd-ink)]">
+                    &ldquo;{t.text}&rdquo;
+                  </blockquote>
+                  <figcaption className="mt-6 flex items-center gap-3 border-t border-[var(--dd-line)] pt-5">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--dd-blue)] text-lg font-bold text-white">
+                      {t.name.charAt(0)}
+                    </span>
+                    <span>
+                      <span className="block font-bold text-[var(--dd-ink)]">{t.name}</span>
+                      <span className="block text-sm text-[var(--dd-mute)]">{t.role}</span>
+                    </span>
+                  </figcaption>
+                </figure>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= FAQ ================= */}
+      <section className="dd-section">
+        <div className="dd-container">
+          <Reveal className="dd-section-head">
+            <span className="dd-eyebrow">Frequently Asked Questions</span>
+            <h2 className="dd-h2">
+              Got Questions? <span className="dd-accent-grad">We've Got Answers</span>
+            </h2>
+          </Reveal>
+          <div className="mx-auto max-w-3xl">
+            <Accordion type="single" collapsible className="space-y-3">
+              {FAQS.map((f, i) => (
+                <AccordionItem key={f.q} value={`item-${i + 1}`} className="dd-faq-item border-b-0 px-5 sm:px-6">
+                  <AccordionTrigger className="px-0 py-5 text-left hover:no-underline">
+                    <span className="text-base font-semibold text-[var(--dd-ink)] sm:text-lg">{f.q}</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-5 text-base leading-relaxed text-[var(--dd-body)]">
+                    {f.a}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+            <div className="mt-8 flex flex-col items-center gap-3 text-center">
+              <p>Still have questions?</p>
+              <button onClick={() => navigate("/contact")} className="dd-btn dd-btn-outline dd-btn-sm">
+                <MessageCircle className="h-4 w-4" />
+                Contact Us
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= CTA ================= */}
+      <section className="pb-20 sm:pb-28">
+        <div className="dd-container">
+          <Reveal>
+            <div className="dd-cta rounded-3xl px-6 py-14 text-center sm:px-12 sm:py-20">
+              <h2 className="dd-h2 mx-auto max-w-3xl" style={{ color: "#fff" }}>
+                Ready to Transform Your Learning Experience?
+              </h2>
+              <p className="mx-auto mt-4 max-w-2xl text-lg text-blue-100">
+                Join thousands of students who have already discovered the power of digital education with
+                DigiDiploma.
+              </p>
+              <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+                <button
+                  onClick={() => navigate("/open-dashboard")}
+                  className="dd-btn dd-btn-white w-full sm:w-auto"
+                >
+                  <BookOpen className="h-5 w-5" />
+                  Go to Dashboard
+                </button>
+                <button
+                  onClick={() => navigate("/contact")}
+                  className="dd-btn dd-btn-outline-white w-full sm:w-auto"
+                >
+                  <Phone className="h-5 w-5" />
+                  Get Support
+                </button>
+              </div>
+              <ul className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-blue-100">
+                {["Free study materials", "MSBTE K-Scheme", "Works on any phone"].map((t) => (
+                  <li key={t} className="inline-flex items-center gap-1.5">
+                    <CheckCircle2 className="h-4 w-4" /> {t}
+                  </li>
+                ))}
               </ul>
             </div>
-          </div>
-
-          {/* Bottom Footer */}
-          <div className="border-t border-slate-700 pt-8">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <div className="text-center md:text-left mb-4 md:mb-0">
-                <p className="text-slate-400 text-sm">
-                  &copy; {new Date().getFullYear()} DigiDiploma. All rights reserved.
-                </p>
-                <p className="text-slate-500 text-xs mt-1">
-                  Designed and Developed by{' '}
-                  <a
-                    href="https://github.com/Onkar3333/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800 hover:underline font-medium transition-colors duration-200"
-                  >
-                    Onkar Bansode
-                  </a>
-                </p>
-              </div>
-
-              <div className="flex items-center space-x-6">
-                <Link to="/privacy" className="text-slate-400 hover:text-blue-400 text-sm transition-colors">
-                  Privacy Policy
-                </Link>
-                <Link to="/terms" className="text-slate-400 hover:text-blue-400 text-sm transition-colors">
-                  Terms of Service
-                </Link>
-                <Link to="/cookies" className="text-slate-400 hover:text-blue-400 text-sm transition-colors">
-                  Cookie Policy
-                </Link>
-              </div>
-            </div>
-          </div>
+          </Reveal>
         </div>
-      </footer>
-    </div>
-  );
-};
+      </section>
 
-// Component definitions
-const FeatureCard = ({ icon, title, description, color }) => {
-  const colorClasses = {
-    blue: "bg-blue-50 border-blue-200 text-blue-600",
-    green: "bg-green-50 border-green-200 text-green-600",
-    purple: "bg-purple-50 border-purple-200 text-purple-600",
-    orange: "bg-orange-50 border-orange-200 text-orange-600",
-    red: "bg-red-50 border-red-200 text-red-600",
-    indigo: "bg-indigo-50 border-indigo-200 text-indigo-600"
-  };
+      <SiteFooter />
 
-  return (
-    <Card className="p-8 hover:shadow-xl transition-all duration-300 border-0 bg-white">
-      <div className={`w-16 h-16 ${colorClasses[color]} rounded-2xl flex items-center justify-center mb-6`}>
-        {icon}
-      </div>
-      <h3 className="text-xl font-bold text-slate-900 mb-4">{title}</h3>
-      <p className="text-slate-600 leading-relaxed">{description}</p>
-    </Card>
-  );
-};
-
-const BranchCard = ({ icon, title, description, subjects, color, onClick }) => {
-  const colorClasses = {
-    blue: "bg-blue-50 border-blue-200 text-blue-600",
-    green: "bg-green-50 border-green-200 text-green-600",
-    purple: "bg-purple-50 border-purple-200 text-purple-600",
-    orange: "bg-orange-50 border-orange-200 text-orange-600",
-    yellow: "bg-yellow-50 border-yellow-200 text-yellow-600",
-    brown: "bg-amber-50 border-amber-200 text-amber-600"
-  };
-
-  const branchImage = getBranchImage(title);
-
-  return (
-    <Card
-      className={`p-6 hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden group ${onClick ? "cursor-pointer hover:scale-[1.02]" : ""}`}
-      role={onClick ? "button" : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      onClick={onClick}
-      onKeyDown={onClick ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); } } : undefined}
-    >
-      <div className="relative mb-4">
-        <div className={`w-full h-32 ${colorClasses[color]} rounded-xl flex items-center justify-center relative overflow-hidden`}>
-          <img
-            src={branchImage}
-            alt={`${title} theme`}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-            loading="lazy"
-            onError={(e) => {
-              // Fallback to icon if image fails to load
-              e.currentTarget.style.display = 'none';
-            }}
-            onLoad={(e) => {
-              // Ensure image is visible when loaded
-              e.currentTarget.style.opacity = '1';
-            }}
-            style={{ opacity: 0.9 }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-br from-black/10 to-black/30"></div>
-          <div className="absolute inset-0 flex items-center justify-center z-10">
-            <div className={`w-14 h-14 ${colorClasses[color]} rounded-xl flex items-center justify-center shadow-lg backdrop-blur-sm bg-white/70 group-hover:scale-110 transition-transform duration-300`}>
-              {icon}
-            </div>
+      {/* ================= WhatsApp community popup ================= */}
+      <Dialog open={showWhatsAppPopup} onOpenChange={setShowWhatsAppPopup}>
+        <DialogContent className="rounded-3xl border-0 bg-white p-8 text-center shadow-2xl sm:max-w-md">
+          <DialogHeader className="p-0">
+            <DialogTitle className="sr-only">Join our Group for IMPs</DialogTitle>
+            <DialogDescription className="sr-only">
+              Get exam updates and important questions. Join our WhatsApp community.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#22c55e] shadow-lg shadow-green-500/30">
+            <img
+              src="https://cdn.simpleicons.org/whatsapp/FFFFFF"
+              alt="WhatsApp"
+              className="h-10 w-10"
+              loading="eager"
+              decoding="async"
+            />
           </div>
-        </div>
-      </div>
-      <h3 className="text-lg font-bold text-slate-900 mb-2">{title}</h3>
-      <p className="text-slate-600 text-sm mb-4">{description}</p>
-      <div className="flex flex-wrap gap-2">
-        {subjects.map((subject, index) => (
-          <Badge key={index} variant="secondary" className="text-xs">
-            {subject}
-          </Badge>
-        ))}
-      </div>
-    </Card>
+          <h3 className="dd-h2 mt-5 text-[1.7rem]">Join our Group for IMPs</h3>
+          <p className="dd-lead mx-auto mt-2 max-w-xs text-base">
+            Get all exam updates and study materials with important questions.
+          </p>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <button
+              className="dd-btn dd-btn-blue flex-1"
+              onClick={() => {
+                window.open(WHATSAPP_COMMUNITY_URL, "_blank");
+                setShowWhatsAppPopup(false);
+              }}
+            >
+              Join Now
+            </button>
+            <button className="dd-btn dd-btn-soft flex-1" onClick={() => setShowWhatsAppPopup(false)}>
+              Already Joined
+            </button>
+          </div>
+          <p className="mt-4 text-xs text-[var(--dd-mute)]">No spam. Community announcements only.</p>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
-
-const TestimonialCard = ({ name, role, text, rating }) => (
-  <Card className="p-8 hover:shadow-xl transition-all duration-300 border-0 bg-white">
-    <div className="flex items-center mb-4">
-      {[...Array(rating)].map((_, i) => (
-        <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-      ))}
-    </div>
-    <p className="text-slate-600 mb-6 italic">"{text}"</p>
-    <div>
-      <div className="font-semibold text-slate-900">{name}</div>
-      <div className="text-sm text-slate-500">{role}</div>
-    </div>
-  </Card>
-);
-
-const SocialLink = ({ href, icon, label = "", target = "_blank", rel = "noopener noreferrer" }) => (
-  <a
-    href={href}
-    target={target}
-    rel={rel}
-    className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors"
-    title={label}
-    aria-label={label}
-  >
-    {icon}
-  </a>
-);
 
 export default Index;

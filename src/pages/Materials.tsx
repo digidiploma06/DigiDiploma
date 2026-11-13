@@ -1,3 +1,5 @@
+import PageHero from "@/components/site/PageHero";
+import SiteFooter from "@/components/site/SiteFooter";
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -1013,51 +1015,23 @@ const Materials = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 pb-16 md:pb-0">
-      {/* Top Header - mobile-first, responsive */}
-      <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-white/20 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="flex items-center justify-between py-3 md:py-4">
-            <div className="flex items-center gap-3 md:gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/open-dashboard')}
-                className="hidden sm:inline-flex text-blue-600 hover:text-blue-700 bg-blue-500/10 backdrop-blur-sm border border-blue-200 hover:border-blue-400 rounded-full px-3"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                <span>Dashboard</span>
-              </Button>
-              <div className="flex items-center gap-3">
-                <img
-                  src="/icons/android-chrome-512x512.png"
-                  alt="DigiDiploma logo"
-                  className="w-9 h-9 md:w-10 md:h-10 rounded-xl object-contain"
-                />
-                <div className="min-w-0">
-                  <h1 className="text-lg md:text-xl font-bold text-slate-900 leading-tight">
-                    Study Materials
-                  </h1>
-                  <p className="text-[11px] md:text-xs text-slate-500 truncate">
-                    {selectedBranch || user?.branch || 'Select Branch'}{" "}
-                    {selectedSemester ? `• Sem ${selectedSemester}` : ''}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="inline-flex sm:hidden rounded-full px-3 text-xs"
-                onClick={() => navigate('/open-dashboard')}
-              >
-                <ArrowLeft className="w-3 h-3 mr-1" />
-                Home
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHero
+        compact
+        eyebrow="MSBTE K-Scheme"
+        title="Study"
+        accent="Materials"
+        subtitle={
+          <>
+            {selectedBranch || user?.branch || 'Select Branch'}{" "}
+            {selectedSemester ? `• Sem ${selectedSemester}` : ''}
+          </>
+        }
+      >
+        <button onClick={() => navigate('/open-dashboard')} className="dd-btn dd-btn-outline dd-btn-sm">
+          <ArrowLeft className="h-4 w-4" />
+          Dashboard
+        </button>
+      </PageHero>
 
       <div id="materials-main" className="max-w-6xl mx-auto px-4 py-6 md:py-8">
         {/* Mobile quick-access cards */}
@@ -1915,6 +1889,7 @@ const Materials = () => {
           </div>
         </div>
       </div>
+      <SiteFooter />
     </div>
   );
 };

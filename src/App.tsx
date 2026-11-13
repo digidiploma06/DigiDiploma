@@ -8,6 +8,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import NotificationHandler from "@/components/NotificationHandler";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+import SkinController, { PageFade } from "@/components/site/SkinController";
 import { useServiceWorker } from "@/hooks/useServiceWorker";
 import { useEffect, useState } from "react";
 import Index from "./pages/Index";
@@ -73,8 +74,10 @@ const App = () => {
             <NotificationHandler />
             <PWAInstallPrompt />
             <BrowserRouter>
+            <SkinController />
             <MaintenanceGate>
               <>
+              <PageFade>
               <Routes>
             <Route path="/" element={<Index />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
@@ -152,6 +155,7 @@ const App = () => {
             />
               <Route path="*" element={<NotFound />} />
             </Routes>
+              </PageFade>
             <MobileBottomNav />
             </>
             </MaintenanceGate>
