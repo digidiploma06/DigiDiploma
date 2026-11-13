@@ -1,48 +1,44 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import {
-  BookOpen,
-  Users,
-  Award,
-  Star,
   ArrowRight,
-  ArrowUpRight,
-  Code,
-  Smartphone,
-  Cpu,
-  Brain,
-  Target,
-  MessageCircle,
-  Download,
-  Phone,
-  Shield,
-  Car,
-  Radio,
-  FileText,
-  Sparkles,
-  GraduationCap,
-  Layers,
+  Award,
   Bell,
+  BookOpen,
+  Brain,
+  Briefcase,
+  CalendarDays,
+  Car,
+  CheckCircle2,
+  Code,
+  Cpu,
+  Download,
+  FileText,
+  GraduationCap,
+  LayoutDashboard,
+  MessageCircle,
+  NotebookPen,
+  Phone,
+  Presentation,
+  Radio,
+  Rocket,
+  Search,
+  Shield,
+  Smartphone,
+  Star,
+  Target,
+  Users,
+  Zap,
 } from "lucide-react";
-import { getBranchImage } from "@/lib/branchImages";
 import { ALL_BRANCHES } from "@/constants/branches";
+import { VVIMP_PRODUCTS } from "@/data/vvimpProducts";
 import SiteNav, { WHATSAPP_COMMUNITY_URL } from "@/components/site/SiteNav";
 import SiteFooter from "@/components/site/SiteFooter";
-import {
-  Counter,
-  Magnetic,
-  Marquee,
-  Reveal,
-  SplitWords,
-  Tilt,
-  motion,
-  useLiteMotion,
-  useMouseParallax,
-  useSmoothScroll,
-  useTransform,
-} from "@/components/site/motion";
+import { Reveal } from "@/components/site/motion";
+
+const TELEGRAM_URL = "https://t.me/digidiploma";
 
 // Config for each branch card (icon, description, subjects, color) — must match ALL_BRANCHES order/names
 const BRANCH_CARD_CONFIG: Record<string, { icon: React.ReactNode; description: string; subjects: string[]; color: string }> = {
@@ -109,62 +105,111 @@ const BRANCH_CARD_CONFIG: Record<string, { icon: React.ReactNode; description: s
 };
 
 
-const BRANCH_ACCENTS: Record<string, string> = {
-  blue: "#7c9cff",
-  green: "#5dffb0",
-  purple: "#b79bff",
-  orange: "#ffa45c",
-  yellow: "#ffe45c",
-  brown: "#ffbf7a",
-};
 
-const FEATURES = [
-  {
-    icon: <BookOpen className="h-7 w-7" />,
-    title: "Comprehensive Study Materials",
-    description:
-      "Access PDFs, PPTs, videos, and handwritten notes organized by branch, semester, and subject with advanced search capabilities.",
-    span: "md:col-span-2",
-  },
-  {
-    icon: <Users className="h-7 w-7" />,
-    title: "10 Engineering Branches",
-    description:
-      "Complete coverage across Computer, IT, Mechanical, Electrical, Civil, ENTC, Automobile, Instrumentation, AIML, and Mechatronics engineering branches.",
-    span: "",
-  },
-  {
-    icon: <Award className="h-7 w-7" />,
-    title: "6 Semester Structure",
-    description: "Organized semester-wise content with MSBTE K-Scheme subjects, quizzes, and progress tracking.",
-    span: "",
-  },
-  {
-    icon: <Code className="h-7 w-7" />,
-    title: "Project Management",
-    description:
-      "Showcase your projects, collaborate with peers, and build your portfolio with our integrated project system.",
-    span: "",
-  },
-  {
-    icon: <Target className="h-7 w-7" />,
-    title: "Secure & Reliable",
-    description: "Enterprise-grade security with role-based access control, ensuring your data is always protected.",
-    span: "",
-  },
-  {
-    icon: <Star className="h-7 w-7" />,
-    title: "24/7 Access",
-    description:
-      "Access your learning materials anytime, anywhere with our responsive web platform and mobile optimization.",
-    span: "md:col-span-2 lg:col-span-3",
-  },
+const STATS = [
+  { icon: <Users className="h-7 w-7" />, value: "1,250+", label: "Active Students" },
+  { icon: <GraduationCap className="h-7 w-7" />, value: "45+", label: "Faculty Members" },
+  { icon: <BookOpen className="h-7 w-7" />, value: "120+", label: "Courses Available" },
+  { icon: <FileText className="h-7 w-7" />, value: "850+", label: "Study Materials" },
 ];
 
 const STEPS = [
-  { n: "01", title: "Pick your branch", text: "Choose from 10 diploma engineering branches." },
-  { n: "02", title: "Open your semester", text: "Subjects are sorted semester-wise on the MSBTE K-Scheme." },
-  { n: "03", title: "Download and study", text: "Save notes, PPTs and projects to your phone for offline use." },
+  {
+    icon: <Search className="h-7 w-7" />,
+    title: "1. Find Your Subject",
+    text: "Pick your branch and semester. Every subject follows the MSBTE K-Scheme.",
+  },
+  {
+    icon: <Download className="h-7 w-7" />,
+    title: "2. Download",
+    text: "Save notes, PPTs and projects to your phone and study offline.",
+  },
+  {
+    icon: <Rocket className="h-7 w-7" />,
+    title: "3. Join & Excel",
+    text: "Join the community for exam updates and important questions.",
+  },
+];
+
+const SERVICES = [
+  {
+    icon: <BookOpen className="h-6 w-6" />,
+    title: "MSBTE Materials",
+    text: "PDFs, PPTs, videos and handwritten notes organized by branch, semester and subject.",
+    cta: "Explore Materials",
+    to: "/materials",
+  },
+  {
+    icon: <Star className="h-6 w-6" />,
+    title: "VVIMP Guides",
+    text: "Unit-wise exam priority guides for MSBTE K-Scheme papers.",
+    cta: "Open VVIMP Store",
+    to: "/vvimp-store",
+  },
+  {
+    icon: <Code className="h-6 w-6" />,
+    title: "Free Projects",
+    text: "Browse and share academic projects and build your portfolio.",
+    cta: "Browse Projects",
+    to: "/projects",
+  },
+  {
+    icon: <CalendarDays className="h-6 w-6" />,
+    title: "Exam Timetable",
+    text: "Find your paper date and the matching guide for every paper.",
+    cta: "View Timetable",
+    to: "/exam-timetable",
+  },
+];
+
+const COMMUNITY_POINTS = [
+  { icon: <MessageCircle className="h-5 w-5" />, title: "Chat with peers", text: "Discuss subjects and projects with fellow students." },
+  { icon: <Zap className="h-5 w-5" />, title: "Fast access to materials", text: "New notes and important questions shared as they arrive." },
+  { icon: <Bell className="h-5 w-5" />, title: "Quick exam updates", text: "Timetable and exam announcements in one place." },
+];
+
+const RESOURCE_TYPES = [
+  { icon: <FileText className="h-6 w-6" />, title: "Notes & PDFs", text: "Subject-wise study notes", to: "/materials" },
+  { icon: <Presentation className="h-6 w-6" />, title: "PPTs", text: "Unit presentations", to: "/materials" },
+  { icon: <NotebookPen className="h-6 w-6" />, title: "Handwritten Notes", text: "Easy-to-revise notes", to: "/materials" },
+  { icon: <Star className="h-6 w-6" />, title: "VVIMP Questions", text: "Exam priority guides", to: "/vvimp-store" },
+  { icon: <Code className="h-6 w-6" />, title: "Projects", text: "Microprojects and more", to: "/projects" },
+  { icon: <CalendarDays className="h-6 w-6" />, title: "Exam Timetable", text: "Paper dates and timings", to: "/exam-timetable" },
+  { icon: <Briefcase className="h-6 w-6" />, title: "Internship", text: "Apply and track", to: "/internship" },
+  { icon: <LayoutDashboard className="h-6 w-6" />, title: "Student Dashboard", text: "Your learning in one place", to: "/open-dashboard" },
+];
+
+const FEATURES = [
+  {
+    icon: <BookOpen className="h-6 w-6" />,
+    title: "Comprehensive Study Materials",
+    text: "Access PDFs, PPTs, videos, and handwritten notes organized by branch, semester, and subject with advanced search capabilities.",
+  },
+  {
+    icon: <Users className="h-6 w-6" />,
+    title: "10 Engineering Branches",
+    text: "Complete coverage across Computer, IT, Mechanical, Electrical, Civil, ENTC, Automobile, Instrumentation, AIML, and Mechatronics engineering branches.",
+  },
+  {
+    icon: <Award className="h-6 w-6" />,
+    title: "6 Semester Structure",
+    text: "Organized semester-wise content with MSBTE K-Scheme subjects, quizzes, and progress tracking.",
+  },
+  {
+    icon: <Code className="h-6 w-6" />,
+    title: "Project Management",
+    text: "Showcase your projects, collaborate with peers, and build your portfolio with our integrated project system.",
+  },
+  {
+    icon: <Target className="h-6 w-6" />,
+    title: "Secure & Reliable",
+    text: "Enterprise-grade security with role-based access control, ensuring your data is always protected.",
+  },
+  {
+    icon: <Smartphone className="h-6 w-6" />,
+    title: "24/7 Access",
+    text: "Access your learning materials anytime, anywhere with our responsive web platform and mobile optimization.",
+  },
 ];
 
 const TESTIMONIALS = [
@@ -220,6 +265,9 @@ const FAQS = [
   },
 ];
 
+// Guides for the current (odd-semester) exam season, shown on the home page
+const FEATURED_GUIDES = VVIMP_PRODUCTS.filter((p) => p.semester % 2 === 1).slice(0, 3);
+
 interface PublicNotice {
   _id?: string;
   id?: string;
@@ -230,23 +278,10 @@ interface PublicNotice {
 const Index = () => {
   const navigate = useNavigate();
   const [notices, setNotices] = useState<PublicNotice[]>([]);
-  const stats = { students: 1250, faculty: 45, courses: 120, materials: 850 };
   const [showWhatsAppPopup, setShowWhatsAppPopup] = useState(true);
-
-  const lite = useLiteMotion();
-  // Plain design: tilt, magnetic buttons, parallax, cursor glow and smooth-scroll are switched off.
-  const heavy = false;
-  useSmoothScroll(heavy);
-  const { sx, sy } = useMouseParallax(heavy);
-  const nearX = useTransform(sx, [-0.5, 0.5], [-34, 34]);
-  const nearY = useTransform(sy, [-0.5, 0.5], [-24, 24]);
-  const farX = useTransform(sx, [-0.5, 0.5], [18, -18]);
-  const farY = useTransform(sy, [-0.5, 0.5], [14, -14]);
-  const stackRX = useTransform(sy, [-0.5, 0.5], [10, -10]);
-  const stackRY = useTransform(sx, [-0.5, 0.5], [-14, 14]);
+  const [libraryTab, setLibraryTab] = useState<"branch" | "type">("branch");
 
   useEffect(() => {
-    // Public notices feed the ticker under the hero
     const fetchNotices = async () => {
       try {
         const res = await fetch("/api/notices/public");
@@ -259,247 +294,324 @@ const Index = () => {
     fetchNotices();
   }, []);
 
-  const openBranch = (branchName: string) => navigate(`/materials?branch=${encodeURIComponent(branchName)}`);
+  const latestNotice = notices[0];
 
   return (
-    <div className={`dd ${lite ? "dd-lite" : ""}`}>
+    <div className="dd">
       <SiteNav />
 
+      {/* Latest notice strip (only when a notice is published) */}
+      {latestNotice?.title ? (
+        <div className="border-b border-[var(--dd-line)] bg-[var(--dd-blue-soft)]">
+          <div className="dd-container flex items-center justify-center gap-2 py-2.5 text-center text-sm text-[var(--dd-blue-dark)]">
+            <Bell className="h-4 w-4 flex-shrink-0" />
+            <span className="font-semibold">{latestNotice.title}</span>
+            {latestNotice.message ? <span className="hidden truncate sm:inline">· {latestNotice.message}</span> : null}
+          </div>
+        </div>
+      ) : null}
+
       {/* ================= HERO ================= */}
-      <section className="dd-noise relative overflow-hidden pb-16 pt-32 sm:pt-40 lg:min-h-screen lg:pb-24">
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <div className="dd-blob dd-blob-a" />
-          <div className="dd-blob dd-blob-b" />
-          <div className="dd-blob dd-blob-c" />
-          <div className="dd-grid-bg absolute inset-0" />
-        </div>
-
-        <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-14 px-5 sm:px-8 lg:grid-cols-12">
-          <div className="lg:col-span-7">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 backdrop-blur"
-            >
-              <Sparkles className="h-4 w-4" style={{ color: "var(--dd-lime)" }} />
-              <span className="dd-mono text-xs uppercase text-white/80">MSBTE K-Scheme · Diploma &amp; Engineering</span>
-            </motion.div>
-
-            <h1 className="dd-display text-[13vw] text-white sm:text-7xl lg:text-[5.6rem]">
-              <SplitWords text="Every diploma" delay={0.3} />
-              <br />
-              <SplitWords text="resource." delay={0.45} />
-              <br />
-              <SplitWords text="One place." delay={0.6} wordClassName={() => "dd-grad-text"} />
-            </h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1 }}
-              className="mt-7 max-w-xl text-lg leading-relaxed text-[var(--dd-mute)] sm:text-xl"
-            >
-              All your Diploma &amp; Engineering free resources, affordable courses in one place with huge community.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.15 }}
-              className="mt-9 flex flex-col gap-4 sm:flex-row sm:flex-wrap"
-            >
-              <Magnetic disabled={!heavy}>
-                <button onClick={() => navigate("/materials")} className="dd-btn dd-btn-lime w-full sm:w-auto">
-                  <Download className="h-5 w-5" />
-                  Get Free Resources
-                </button>
-              </Magnetic>
-              <Magnetic disabled={!heavy}>
-                <button onClick={() => navigate("/open-dashboard")} className="dd-btn dd-btn-violet w-full sm:w-auto">
-                  <BookOpen className="h-5 w-5" />
-                  Go to Dashboard
-                  <ArrowRight className="h-5 w-5" />
-                </button>
-              </Magnetic>
-              <Magnetic disabled={!heavy}>
-                <button onClick={() => navigate("/projects")} className="dd-btn dd-btn-ghost w-full sm:w-auto">
-                  <Code className="h-5 w-5" />
-                  Download Free Projects
-                </button>
-              </Magnetic>
-            </motion.div>
-          </div>
-
-          {/* Floating 3D study stack */}
-          <div className="relative hidden h-[520px] lg:col-span-5 lg:block" aria-hidden>
-            <motion.div
-              className="absolute inset-0"
-              style={{ rotateX: stackRX, rotateY: stackRY, transformPerspective: 1200, transformStyle: "preserve-3d" }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1.1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <motion.div style={{ x: farX, y: farY }} className="absolute right-2 top-6 w-64">
-                <div className="rounded-2xl border border-white/15 bg-white/[0.06] p-5 backdrop-blur-xl">
-                  <div className="mb-4 flex items-center justify-between">
-                    <span className="dd-mono text-[10px] uppercase text-white/50">Projects</span>
-                    <Code className="h-4 w-4 text-white/50" />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="h-2 w-4/5 rounded-full bg-white/20" />
-                    <div className="h-2 w-3/5 rounded-full bg-white/10" />
-                    <div className="h-2 w-2/3 rounded-full bg-white/10" />
-                  </div>
-                  <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs text-white/80">
-                    <Layers className="h-3 w-3" /> Microprojects
-                  </div>
-                </div>
-              </motion.div>
-
-              <motion.div style={{ x: nearX, y: nearY }} className="absolute left-0 top-28 w-80">
-                <div
-                  className="rounded-2xl p-6"
-                  style={{ background: "#5b3fe0" }}
-                >
-                  <div className="mb-8 flex items-center justify-between">
-                    <span className="dd-mono text-[11px] uppercase text-white/70">Study Material</span>
-                    <FileText className="h-5 w-5 text-white/80" />
-                  </div>
-                  <div className="dd-display text-4xl text-white">Notes, PPTs &amp; PDFs</div>
-                  <div className="mt-6 flex flex-wrap gap-2">
-                    {["Sem 1", "Sem 2", "Sem 3", "Sem 4", "Sem 5", "Sem 6"].map((s) => (
-                      <span key={s} className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white">
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-
-              <motion.div style={{ x: farX, y: nearY }} className="absolute bottom-6 right-0 w-64">
-                <div
-                  className="rounded-2xl p-5"
-                  style={{ background: "var(--dd-lime)", color: "var(--dd-ink)" }}
-                >
-                  <div className="mb-6 flex items-center justify-between">
-                    <span className="dd-mono text-[10px] uppercase opacity-70">VVIMP Store</span>
-                    <Star className="h-4 w-4" />
-                  </div>
-                  <div className="dd-display text-3xl">Exam-ready question banks</div>
-                  <div className="mt-4 flex items-center gap-1 text-sm font-bold">
-                    Open store <ArrowUpRight className="h-4 w-4" />
-                  </div>
-                </div>
-              </motion.div>
-
-              <motion.div
-                style={{ x: nearX, y: farY }}
-                className="absolute bottom-24 left-10 flex h-20 w-20 items-center justify-center rounded-3xl border border-white/15 bg-[var(--dd-surface)]"
-              >
-                <GraduationCap className="h-9 w-9" style={{ color: "var(--dd-lime)" }} />
-              </motion.div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Stats */}
-        <div className="relative z-10 mx-auto mt-16 max-w-7xl px-5 sm:px-8 lg:mt-20">
-          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 md:grid-cols-4">
-            {[
-              { v: stats.students, l: "Active Students" },
-              { v: stats.faculty, l: "Faculty Members" },
-              { v: stats.courses, l: "Courses Available" },
-              { v: stats.materials, l: "Study Materials" },
-            ].map((s) => (
-              <div key={s.l} className="bg-[var(--dd-ink)] px-5 py-7 sm:px-8">
-                <Counter value={s.v} suffix="+" className="dd-display block text-4xl text-white sm:text-5xl" />
-                <div className="dd-mono mt-2 text-[11px] uppercase text-[var(--dd-mute)]">{s.l}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-      </section>
-
-      {/* ================= TICKER ================= */}
-      <section className={notices.length > 0 ? "relative border-y border-white/10 bg-[var(--dd-ink-2)] py-5" : "hidden"} aria-label="Notices">
-        {notices.length > 0 ? (
-          <Marquee speed={Math.max(30, notices.length * 12)}>
-            {notices.map((n, i) => (
-              <span key={n._id || n.id || i} className="flex items-center gap-3 whitespace-nowrap text-sm text-white/85">
-                <Bell className="h-4 w-4 flex-shrink-0" style={{ color: "var(--dd-lime)" }} />
-                <span className="font-bold text-white">{n.title}</span>
-                {n.message ? <span className="text-[var(--dd-mute)]">{n.message}</span> : null}
-              </span>
-            ))}
-          </Marquee>
-        ) : null}
-      </section>
-
-      {/* ================= FEATURES ================= */}
-      <section className="relative py-24 sm:py-32">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+      <section className="pb-16 pt-14 sm:pt-20 md:pb-24">
+        <div className="dd-container text-center">
           <Reveal>
-            <div className="dd-eyebrow mb-4">Why DigiDiploma</div>
+            <span className="dd-eyebrow">MSBTE K-Scheme · Diploma &amp; Engineering</span>
+            <h1 className="dd-h1 mx-auto mt-6 max-w-4xl">
+              Study Smarter, <span className="dd-accent">Score Better!</span>
+            </h1>
+            <p className="dd-lead mx-auto mt-6 max-w-2xl">
+              All your Diploma &amp; Engineering free resources, affordable courses in one place with huge community
+            </p>
+            <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <button onClick={() => navigate("/open-dashboard")} className="dd-btn dd-btn-dark w-full sm:w-auto">
+                <Rocket className="h-5 w-5" />
+                Go to Dashboard
+              </button>
+              <button onClick={() => navigate("/materials")} className="dd-btn dd-btn-outline w-full sm:w-auto">
+                <Download className="h-5 w-5" />
+                Get Free Resources
+              </button>
+            </div>
+            <Link to="/projects" className="dd-link mt-5">
+              Download Free Projects <ArrowRight className="h-4 w-4" />
+            </Link>
           </Reveal>
-          <h2 className="dd-display max-w-4xl text-5xl text-white sm:text-7xl">
-            <SplitWords text="Why Choose" /> <SplitWords text="DigiDiploma?" delay={0.15} wordClassName={() => "dd-grad-text"} />
-          </h2>
+
+          {/* Stats */}
           <Reveal delay={0.1}>
-            <p className="mt-6 max-w-2xl text-lg text-[var(--dd-mute)]">
+            <div className="dd-card mx-auto mt-14 grid max-w-4xl grid-cols-2 md:grid-cols-4">
+              {STATS.map((s, i) => (
+                <div
+                  key={s.label}
+                  className={`px-4 py-7 ${i % 2 === 1 ? "" : "border-r"} ${i < 2 ? "border-b md:border-b-0" : ""} ${i < 3 ? "md:border-r" : "md:border-r-0"} border-[var(--dd-line)]`}
+                >
+                  <div className="mx-auto mb-3 flex justify-center text-[var(--dd-blue)]">{s.icon}</div>
+                  <div className="dd-display text-3xl font-extrabold">{s.value}</div>
+                  <div className="mt-1 text-sm text-[var(--dd-mute)]">{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.15}>
+            <p className="mt-10 text-sm font-semibold uppercase tracking-wider text-[var(--dd-mute)]">
+              Built for MSBTE K-Scheme diploma students
+            </p>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-base font-bold text-slate-400">
+              <span>10 Branches</span>
+              <span>6 Semesters</span>
+              <span>Notes &amp; PPTs</span>
+              <span>VVIMP Guides</span>
+              <span>Projects</span>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ================= 3 STEPS ================= */}
+      <section className="dd-section dd-soft">
+        <div className="dd-container">
+          <Reveal className="dd-section-head">
+            <span className="dd-eyebrow">How it works</span>
+            <h2 className="dd-h2">
+              Your Path to Success in <span className="dd-accent">3 Easy Steps</span>
+            </h2>
+            <p className="dd-lead">From finding your subject to exam day, everything is a few taps away.</p>
+          </Reveal>
+          <div className="grid gap-6 md:grid-cols-3">
+            {STEPS.map((s, i) => (
+              <Reveal key={s.title} delay={0.06 * i}>
+                <div className="dd-card h-full p-8 text-center">
+                  <div className="dd-icon dd-icon-round mx-auto">{s.icon}</div>
+                  <h3 className="dd-h3 mt-5">{s.title}</h3>
+                  <p className="mt-2 leading-relaxed">{s.text}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= SERVICES ================= */}
+      <section className="dd-section">
+        <div className="dd-container">
+          <Reveal className="dd-section-head">
+            <span className="dd-eyebrow">Our services</span>
+            <h2 className="dd-h2">
+              Everything You Need to <span className="dd-accent">Succeed</span>
+            </h2>
+            <p className="dd-lead">Free study material, exam guides, projects and exam dates for diploma students.</p>
+          </Reveal>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {SERVICES.map((s, i) => (
+              <Reveal key={s.title} delay={0.05 * i}>
+                <Link to={s.to} className="dd-card dd-card-link flex h-full flex-col p-7">
+                  <div className="dd-icon">{s.icon}</div>
+                  <h3 className="dd-h3 mt-5">{s.title}</h3>
+                  <p className="mt-2 flex-1 leading-relaxed">{s.text}</p>
+                  <span className="dd-link mt-5">
+                    {s.cta} <ArrowRight className="h-4 w-4" />
+                  </span>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= COMMUNITY BAND ================= */}
+      <section className="dd-section dd-band">
+        <div className="dd-container grid items-center gap-12 lg:grid-cols-2">
+          <Reveal>
+            <span className="dd-eyebrow" style={{ background: "rgba(96,165,250,0.15)", color: "#93c5fd" }}>
+              Community
+            </span>
+            <h2 className="dd-h2 mt-4">Join Our Active Student Community</h2>
+            <p className="dd-lead mt-4 max-w-lg">
+              Get all exam updates and study materials with important questions, and learn together with students from
+              your branch.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <a href={WHATSAPP_COMMUNITY_URL} target="_blank" rel="noopener noreferrer" className="dd-btn dd-btn-wa">
+                <MessageCircle className="h-5 w-5" />
+                WhatsApp
+              </a>
+              <a href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer" className="dd-btn dd-btn-tg">
+                <Phone className="h-5 w-5" />
+                Telegram
+              </a>
+            </div>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8">
+              <ul className="space-y-6">
+                {COMMUNITY_POINTS.map((p) => (
+                  <li key={p.title} className="flex gap-4">
+                    <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-[var(--dd-blue)] text-white">
+                      {p.icon}
+                    </span>
+                    <div>
+                      <h3 className="dd-h3">{p.title}</h3>
+                      <p className="mt-1 text-slate-300">{p.text}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ================= RESOURCE LIBRARY ================= */}
+      <section className="dd-section">
+        <div className="dd-container">
+          <Reveal className="dd-section-head">
+            <span className="dd-eyebrow">Resources</span>
+            <h2 className="dd-h2">
+              Your Complete <span className="dd-accent">Resource Library</span>
+            </h2>
+            <p className="dd-lead">Choose your branch, or jump straight to the kind of resource you need.</p>
+            <div className="dd-tabs mt-7" role="tablist" aria-label="Browse resources">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={libraryTab === "branch"}
+                className="dd-tab"
+                onClick={() => setLibraryTab("branch")}
+              >
+                By Branch
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={libraryTab === "type"}
+                className="dd-tab"
+                onClick={() => setLibraryTab("type")}
+              >
+                By Resource
+              </button>
+            </div>
+          </Reveal>
+
+          {libraryTab === "branch" ? (
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+              {ALL_BRANCHES.map((branchName) => {
+                const config = BRANCH_CARD_CONFIG[branchName];
+                return (
+                  <Link
+                    key={branchName}
+                    to={`/materials?branch=${encodeURIComponent(branchName)}`}
+                    className="dd-card dd-card-link flex h-full flex-col items-center p-5 text-center sm:p-6"
+                  >
+                    <span className="dd-icon dd-icon-round [&_svg]:h-6 [&_svg]:w-6">
+                      {config?.icon ?? <BookOpen className="h-6 w-6" />}
+                    </span>
+                    <h3 className="dd-h3 mt-4 text-base">{branchName}</h3>
+                    <p className="mt-1.5 hidden text-sm leading-snug text-[var(--dd-mute)] sm:block">
+                      {config?.subjects.slice(0, 2).join(" · ")}
+                    </p>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+              {RESOURCE_TYPES.map((r) => (
+                <Link
+                  key={r.title}
+                  to={r.to}
+                  className="dd-card dd-card-link flex h-full flex-col items-center p-5 text-center sm:p-6"
+                >
+                  <span className="dd-icon dd-icon-round">{r.icon}</span>
+                  <h3 className="dd-h3 mt-4 text-base">{r.title}</h3>
+                  <p className="mt-1.5 text-sm text-[var(--dd-mute)]">{r.text}</p>
+                </Link>
+              ))}
+            </div>
+          )}
+
+          <div className="mt-10 text-center">
+            <button onClick={() => navigate("/materials")} className="dd-btn dd-btn-blue">
+              View All Materials <ArrowRight className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= VVIMP GUIDES ================= */}
+      {FEATURED_GUIDES.length > 0 ? (
+        <section className="dd-section dd-soft">
+          <div className="dd-container">
+            <Reveal className="dd-section-head">
+              <span className="dd-eyebrow">Exam season</span>
+              <h2 className="dd-h2">
+                Explore Our <span className="dd-accent">VVIMP Guides</span>
+              </h2>
+              <p className="dd-lead">Unit-wise exam priority guides for MSBTE K-Scheme papers.</p>
+            </Reveal>
+            <div className="grid gap-6 md:grid-cols-3">
+              {FEATURED_GUIDES.map((p, i) => (
+                <Reveal key={p.code} delay={0.06 * i}>
+                  <div className="dd-card flex h-full flex-col overflow-hidden">
+                    <div className="flex h-44 items-center justify-center bg-[var(--dd-blue-soft)]">
+                      <img
+                        src={`/vvimp-covers/${p.code}.jpg`}
+                        alt={`${p.name} VVIMP guide cover`}
+                        className="h-36 w-auto rounded-md object-contain shadow-md"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
+                    </div>
+                    <div className="flex flex-1 flex-col p-6">
+                      <div className="text-xs font-bold uppercase tracking-wider text-[var(--dd-blue)]">
+                        Semester {p.semester} · {p.code}
+                      </div>
+                      <h3 className="dd-h3 mt-2">{p.name}</h3>
+                      <p className="mt-1 text-sm text-[var(--dd-mute)]">{p.branchLabel}</p>
+                      <div className="mt-5 flex items-center justify-between pt-1">
+                        <span className="dd-display text-2xl font-extrabold">₹{p.price}</span>
+                        <a href={p.url} target="_blank" rel="noopener noreferrer" className="dd-btn dd-btn-dark dd-btn-sm">
+                          Get Now
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+            <div className="mt-10 text-center">
+              <Link to="/vvimp-store" className="dd-link">
+                View all VVIMP guides <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* ================= WHY CHOOSE ================= */}
+      <section className="dd-section">
+        <div className="dd-container">
+          <Reveal className="dd-section-head">
+            <span className="dd-eyebrow">Why DigiDiploma</span>
+            <h2 className="dd-h2">
+              Why Choose <span className="dd-accent">DigiDiploma?</span>
+            </h2>
+            <p className="dd-lead">
               Experience the future of education with our comprehensive digital platform designed specifically for
               diploma students.
             </p>
           </Reveal>
-
-          <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-x-10 gap-y-9 md:grid-cols-2 lg:grid-cols-3">
             {FEATURES.map((f, i) => (
-              <Reveal key={f.title} delay={0.06 * i} className={f.span}>
-                <Tilt disabled={!heavy} className="h-full p-7 sm:p-8">
-                  <div
-                    className="mb-10 flex h-14 w-14 items-center justify-center rounded-2xl"
-                    style={{
-                      background: i % 2 === 0 ? "var(--dd-violet)" : "var(--dd-lime)",
-                      color: i % 2 === 0 ? "#fff" : "var(--dd-ink)",
-                    }}
-                  >
-                    {f.icon}
+              <Reveal key={f.title} delay={0.04 * i}>
+                <div className="flex gap-4">
+                  <span className="dd-icon">{f.icon}</span>
+                  <div>
+                    <h3 className="dd-h3">{f.title}</h3>
+                    <p className="mt-1.5 leading-relaxed">{f.text}</p>
                   </div>
-                  <div className="dd-mono mb-3 text-xs text-white/35">0{i + 1}</div>
-                  <h3 className="dd-display mb-3 text-2xl text-white">{f.title}</h3>
-                  <p className="leading-relaxed text-[var(--dd-mute)]">{f.description}</p>
-                </Tilt>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ================= HOW IT WORKS ================= */}
-      <section className="relative overflow-hidden border-y border-white/10 bg-[var(--dd-ink-2)] py-24">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8">
-          <Reveal>
-            <div className="dd-eyebrow mb-4">How it works</div>
-          </Reveal>
-          <h2 className="dd-display text-5xl text-white sm:text-6xl">
-            <SplitWords text="Three taps to your notes." />
-          </h2>
-          <div className="mt-14 grid gap-10 md:grid-cols-3">
-            {STEPS.map((s, i) => (
-              <Reveal key={s.n} delay={0.12 * i}>
-                <div className="relative border-t border-white/15 pt-8">
-                  <motion.span
-                    className="absolute -top-px left-0 h-px"
-                    style={{ background: "var(--dd-lime)" }}
-                    initial={{ width: 0 }}
-                    whileInView={{ width: "100%" }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1.1, delay: 0.2 + 0.15 * i }}
-                  />
-                  <div className="dd-display text-7xl text-white/10">{s.n}</div>
-                  <h3 className="dd-display mt-4 text-3xl text-white">{s.title}</h3>
-                  <p className="mt-3 text-[var(--dd-mute)]">{s.text}</p>
                 </div>
               </Reveal>
             ))}
@@ -507,90 +619,40 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ================= BRANCHES ================= */}
-      <section className="relative py-24 sm:py-32">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8">
-          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-            <div>
-              <Reveal>
-                <div className="dd-eyebrow mb-4">10 branches</div>
-              </Reveal>
-              <h2 className="dd-display max-w-3xl text-5xl text-white sm:text-7xl">
-                <SplitWords text="Available Engineering Branches" />
-              </h2>
-            </div>
-            <Reveal delay={0.1}>
-              <p className="max-w-sm text-[var(--dd-mute)]">
-                Choose from our comprehensive range of diploma engineering programs designed for the modern industry.
-              </p>
-            </Reveal>
-          </div>
-
-          <div className="dd-snap-row -mx-5 mt-14 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
-            {ALL_BRANCHES.map((branchName, i) => {
-              const config = BRANCH_CARD_CONFIG[branchName] || {
-                icon: <BookOpen className="h-8 w-8" />,
-                description: "Study materials for this branch.",
-                subjects: ["Materials"],
-                color: "blue",
-              };
-              return (
-                <Reveal key={branchName} delay={0.05 * (i % 3)} className="w-[82vw] flex-shrink-0 snap-center sm:w-auto">
-                  <BranchCard
-                    title={branchName}
-                    icon={config.icon}
-                    description={config.description}
-                    subjects={config.subjects}
-                    accent={BRANCH_ACCENTS[config.color] || BRANCH_ACCENTS.blue}
-                    tilt={heavy}
-                    onClick={() => openBranch(branchName)}
-                  />
-                </Reveal>
-              );
-            })}
-          </div>
-          <p className="dd-mono mt-2 text-center text-[11px] uppercase text-white/40 sm:hidden">Swipe to see all branches →</p>
-        </div>
-      </section>
-
       {/* ================= TESTIMONIALS ================= */}
-      <section className="relative border-t border-white/10 bg-[var(--dd-ink-2)] py-24 sm:py-32">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8">
-          <Reveal>
-            <div className="dd-eyebrow mb-4">Student voices</div>
-          </Reveal>
-          <h2 className="dd-display text-5xl text-white sm:text-7xl">
-            <SplitWords text="What Our Students Say" />
-          </h2>
-          <Reveal delay={0.1}>
-            <p className="mt-6 max-w-2xl text-lg text-[var(--dd-mute)]">
+      <section className="dd-section dd-soft">
+        <div className="dd-container">
+          <Reveal className="dd-section-head">
+            <span className="dd-eyebrow">Student reviews</span>
+            <h2 className="dd-h2">
+              What Our <span className="dd-accent">Students Say</span>
+            </h2>
+            <p className="dd-lead">
               Hear from students who have transformed their learning experience with DigiDiploma.
             </p>
           </Reveal>
-
-          <div className="mt-14 grid gap-5 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3">
             {TESTIMONIALS.map((t, i) => (
-              <Reveal key={t.name} delay={0.1 * i}>
-                <Tilt disabled={!heavy} className="flex h-full flex-col p-8">
-                  <div className="mb-6 flex gap-1" aria-label="5 out of 5 stars">
+              <Reveal key={t.name} delay={0.06 * i}>
+                <figure className="dd-card flex h-full flex-col p-7">
+                  <div className="flex gap-1 text-amber-400" aria-label="5 out of 5 stars">
                     {[...Array(5)].map((_, s) => (
-                      <Star key={s} className="h-4 w-4 fill-current" style={{ color: "var(--dd-lime)" }} />
+                      <Star key={s} className="h-4 w-4 fill-current" />
                     ))}
                   </div>
-                  <p className="flex-1 text-xl leading-relaxed text-white">&ldquo;{t.text}&rdquo;</p>
-                  <div className="mt-8 flex items-center gap-3 border-t border-white/10 pt-6">
-                    <div
-                      className="dd-display flex h-11 w-11 items-center justify-center rounded-full text-lg text-white"
-                      style={{ background: "var(--dd-violet)" }}
-                    >
+                  <blockquote className="mt-4 flex-1 text-[1.05rem] leading-relaxed text-[var(--dd-ink)]">
+                    &ldquo;{t.text}&rdquo;
+                  </blockquote>
+                  <figcaption className="mt-6 flex items-center gap-3 border-t border-[var(--dd-line)] pt-5">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--dd-blue)] text-lg font-bold text-white">
                       {t.name.charAt(0)}
-                    </div>
-                    <div>
-                      <div className="font-bold text-white">{t.name}</div>
-                      <div className="text-sm text-[var(--dd-mute)]">{t.role}</div>
-                    </div>
-                  </div>
-                </Tilt>
+                    </span>
+                    <span>
+                      <span className="block font-bold text-[var(--dd-ink)]">{t.name}</span>
+                      <span className="block text-sm text-[var(--dd-mute)]">{t.role}</span>
+                    </span>
+                  </figcaption>
+                </figure>
               </Reveal>
             ))}
           </div>
@@ -598,210 +660,120 @@ const Index = () => {
       </section>
 
       {/* ================= FAQ ================= */}
-      <section className="relative py-24 sm:py-32">
-        <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <div className="lg:sticky lg:top-28">
-              <Reveal>
-                <div className="dd-eyebrow mb-4">Frequently Asked Questions</div>
-              </Reveal>
-              <h2 className="dd-display text-5xl text-white sm:text-6xl">
-                <SplitWords text="Got Questions? We've Got Answers" />
-              </h2>
-              <Reveal delay={0.1}>
-                <p className="mt-6 text-[var(--dd-mute)]">Still have questions?</p>
-                <button onClick={() => navigate("/contact")} className="dd-btn dd-btn-ghost mt-4">
-                  <MessageCircle className="h-5 w-5" />
-                  Contact Us
-                </button>
-              </Reveal>
-            </div>
-          </div>
-
-          <div className="lg:col-span-8">
+      <section className="dd-section">
+        <div className="dd-container">
+          <Reveal className="dd-section-head">
+            <span className="dd-eyebrow">Frequently Asked Questions</span>
+            <h2 className="dd-h2">
+              Got Questions? <span className="dd-accent">We've Got Answers</span>
+            </h2>
+          </Reveal>
+          <div className="mx-auto max-w-3xl">
             <Accordion type="single" collapsible className="space-y-3">
               {FAQS.map((f, i) => (
-                <Reveal key={f.q} delay={0.04 * i} y={20}>
-                  <AccordionItem value={`item-${i + 1}`} className="dd-faq-item border-b-0 px-6">
-                    <AccordionTrigger className="px-0 py-5 text-left text-white hover:no-underline">
-                      <span className="flex items-baseline gap-4">
-                        <span className="dd-mono text-xs" style={{ color: "var(--dd-lime)" }}>
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
-                        <span className="text-lg font-semibold text-white">{f.q}</span>
-                      </span>
-                    </AccordionTrigger>
-                    <AccordionContent className="pb-6 pl-10 text-base leading-relaxed text-[var(--dd-mute)]">
-                      {f.a}
-                    </AccordionContent>
-                  </AccordionItem>
-                </Reveal>
+                <AccordionItem key={f.q} value={`item-${i + 1}`} className="dd-faq-item border-b-0 px-5 sm:px-6">
+                  <AccordionTrigger className="px-0 py-5 text-left hover:no-underline">
+                    <span className="text-base font-semibold text-[var(--dd-ink)] sm:text-lg">{f.q}</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-5 text-base leading-relaxed text-[var(--dd-body)]">
+                    {f.a}
+                  </AccordionContent>
+                </AccordionItem>
               ))}
             </Accordion>
+            <div className="mt-8 flex flex-col items-center gap-3 text-center">
+              <p>Still have questions?</p>
+              <button onClick={() => navigate("/contact")} className="dd-btn dd-btn-outline dd-btn-sm">
+                <MessageCircle className="h-4 w-4" />
+                Contact Us
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ================= CTA ================= */}
-      <section className="relative px-3 pb-24 sm:px-6">
-        <Reveal>
-          <div
-            className="relative mx-auto max-w-7xl overflow-hidden rounded-2xl px-6 py-16 text-center sm:px-12 sm:py-20"
-            style={{ background: "#5b3fe0" }}
-          >
-            <div className="dd-blob dd-blob-b" style={{ top: "-30%", right: "-10%" }} aria-hidden />
-            <h2 className="dd-display relative mx-auto max-w-4xl text-5xl text-white sm:text-7xl">
-              <SplitWords text="Ready to Transform Your Learning Experience?" />
-            </h2>
-            <p className="relative mx-auto mt-6 max-w-2xl text-lg text-white/75">
-              Join thousands of students who have already discovered the power of digital education with DigiDiploma.
-            </p>
-            <div className="relative mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-              <Magnetic disabled={!heavy}>
-                <button onClick={() => navigate("/open-dashboard")} className="dd-btn dd-btn-lime w-full sm:w-auto">
+      <section className="pb-20 sm:pb-28">
+        <div className="dd-container">
+          <Reveal>
+            <div className="rounded-3xl bg-[var(--dd-blue)] px-6 py-14 text-center sm:px-12 sm:py-20">
+              <h2 className="dd-h2 mx-auto max-w-3xl" style={{ color: "#fff" }}>
+                Ready to Transform Your Learning Experience?
+              </h2>
+              <p className="mx-auto mt-4 max-w-2xl text-lg text-blue-100">
+                Join thousands of students who have already discovered the power of digital education with
+                DigiDiploma.
+              </p>
+              <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+                <button
+                  onClick={() => navigate("/open-dashboard")}
+                  className="dd-btn dd-btn-white w-full sm:w-auto"
+                >
                   <BookOpen className="h-5 w-5" />
                   Go to Dashboard
                 </button>
-              </Magnetic>
-              <Magnetic disabled={!heavy}>
                 <button
                   onClick={() => navigate("/contact")}
-                  className="dd-btn dd-btn-outline w-full sm:w-auto"
+                  className="dd-btn dd-btn-outline-white w-full sm:w-auto"
                 >
                   <Phone className="h-5 w-5" />
                   Get Support
                 </button>
-              </Magnetic>
+              </div>
+              <ul className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-blue-100">
+                {["Free study materials", "MSBTE K-Scheme", "Works on any phone"].map((t) => (
+                  <li key={t} className="inline-flex items-center gap-1.5">
+                    <CheckCircle2 className="h-4 w-4" /> {t}
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
-        </Reveal>
+          </Reveal>
+        </div>
       </section>
 
       <SiteFooter />
 
       {/* ================= WhatsApp community popup ================= */}
       <Dialog open={showWhatsAppPopup} onOpenChange={setShowWhatsAppPopup}>
-        <DialogContent className="overflow-hidden rounded-3xl border border-white/10 bg-[#11111c] p-0 text-white shadow-2xl sm:max-w-md">
+        <DialogContent className="rounded-3xl border-0 bg-white p-8 text-center shadow-2xl sm:max-w-md">
           <DialogHeader className="p-0">
             <DialogTitle className="sr-only">Join our Group for IMPs</DialogTitle>
             <DialogDescription className="sr-only">
               Get exam updates and important questions. Join our WhatsApp community.
             </DialogDescription>
           </DialogHeader>
-          <div
-            className="relative px-8 pb-7 pt-9 text-center"
-            style={{ background: "#5b3fe0" }}
-          >
-            <div className="relative mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[#25D366] shadow-xl">
-                            <img
-                src="https://cdn.simpleicons.org/whatsapp/FFFFFF"
-                alt="WhatsApp"
-                className="h-9 w-9"
-                loading="eager"
-                decoding="async"
-              />
-            </div>
-            <div className="dd-mono inline-flex rounded-full bg-white/15 px-3 py-1 text-[11px] uppercase">
-              Exclusive Community
-            </div>
-            <h3 className="dd-display mt-3 text-3xl text-white">Join our Group for IMPs</h3>
-            <p className="mx-auto mt-2 max-w-md text-sm text-white/85 sm:text-base">
-              Get all exam updates and study materials with important questions.
-            </p>
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#22c55e] shadow-lg shadow-green-500/30">
+            <img
+              src="https://cdn.simpleicons.org/whatsapp/FFFFFF"
+              alt="WhatsApp"
+              className="h-10 w-10"
+              loading="eager"
+              decoding="async"
+            />
           </div>
-          <div className="p-6 sm:p-7">
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <button
-                className="dd-btn dd-btn-lime h-12 flex-1"
-                onClick={() => {
-                  window.open(WHATSAPP_COMMUNITY_URL, "_blank");
-                  setShowWhatsAppPopup(false);
-                }}
-              >
-                Join Now
-                <ArrowRight className="h-4 w-4" />
-              </button>
-              <button
-                className="dd-btn dd-btn-outline h-12 flex-1"
-                onClick={() => setShowWhatsAppPopup(false)}
-              >
-                Already Joined
-              </button>
-            </div>
-            <p className="mt-4 text-center text-xs text-white/45">No spam. Community announcements only.</p>
+          <h3 className="dd-h2 mt-5 text-[1.7rem]">Join our Group for IMPs</h3>
+          <p className="dd-lead mx-auto mt-2 max-w-xs text-base">
+            Get all exam updates and study materials with important questions.
+          </p>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <button
+              className="dd-btn dd-btn-blue flex-1"
+              onClick={() => {
+                window.open(WHATSAPP_COMMUNITY_URL, "_blank");
+                setShowWhatsAppPopup(false);
+              }}
+            >
+              Join Now
+            </button>
+            <button className="dd-btn dd-btn-soft flex-1" onClick={() => setShowWhatsAppPopup(false)}>
+              Already Joined
+            </button>
           </div>
+          <p className="mt-4 text-xs text-[var(--dd-mute)]">No spam. Community announcements only.</p>
         </DialogContent>
       </Dialog>
     </div>
-  );
-};
-
-const BranchCard = ({
-  icon,
-  title,
-  description,
-  subjects,
-  accent,
-  tilt,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  subjects: string[];
-  accent: string;
-  tilt: boolean;
-  onClick: () => void;
-}) => {
-  const branchImage = getBranchImage(title);
-
-  return (
-    <Tilt
-      disabled={!tilt}
-      className="group h-full cursor-pointer"
-      role="button"
-      tabIndex={0}
-      onClick={onClick}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onClick();
-        }
-      }}
-    >
-      <div className="relative h-44 overflow-hidden">
-        <img
-          src={branchImage}
-          alt={`${title} theme`}
-          className="h-full w-full object-cover opacity-60 transition-all duration-700 group-hover:scale-110 group-hover:opacity-90"
-          loading="lazy"
-          onError={(e) => {
-            e.currentTarget.style.display = "none";
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0b0b14] via-[#0b0b14]/40 to-transparent" />
-        <div
-          className="absolute left-5 top-5 flex h-12 w-12 items-center justify-center rounded-2xl [&_svg]:h-6 [&_svg]:w-6"
-          style={{ background: accent, color: "#0b0b14" }}
-        >
-          {icon}
-        </div>
-        <div className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-black/30 text-white backdrop-blur transition-all duration-300 group-hover:rotate-45 group-hover:border-transparent group-hover:bg-[var(--dd-lime)] group-hover:text-[var(--dd-ink)]">
-          <ArrowUpRight className="h-5 w-5" />
-        </div>
-      </div>
-      <div className="p-6">
-        <h3 className="dd-display text-2xl text-white">{title}</h3>
-        <p className="mt-2 text-sm leading-relaxed text-[var(--dd-mute)]">{description}</p>
-        <div className="mt-5 flex flex-wrap gap-2">
-          {subjects.map((subject) => (
-            <span key={subject} className="rounded-full border border-white/12 px-3 py-1 text-xs text-white/75">
-              {subject}
-            </span>
-          ))}
-        </div>
-      </div>
-    </Tilt>
   );
 };
 

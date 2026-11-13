@@ -586,7 +586,7 @@ const Projects = () => {
       <PageHero compact eyebrow="Build · Share · Learn" title="Student" accent="Projects" subtitle="Browse and share academic projects">
         <button
           onClick={() => navigate(isAuthenticated ? '/student-dashboard' : '/')}
-          className="dd-btn dd-btn-ghost dd-btn-sm"
+          className="dd-btn dd-btn-outline dd-btn-sm"
         >
           <ArrowLeft className="h-4 w-4" />
           {isAuthenticated ? 'Back to Dashboard' : 'Back to Home'}

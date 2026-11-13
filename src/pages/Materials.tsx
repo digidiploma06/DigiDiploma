@@ -1027,7 +1027,7 @@ const Materials = () => {
           </>
         }
       >
-        <button onClick={() => navigate('/open-dashboard')} className="dd-btn dd-btn-ghost dd-btn-sm">
+        <button onClick={() => navigate('/open-dashboard')} className="dd-btn dd-btn-outline dd-btn-sm">
           <ArrowLeft className="h-4 w-4" />
           Dashboard
         </button>

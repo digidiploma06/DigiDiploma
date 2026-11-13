@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import { Instagram, Linkedin, MessageCircle, Youtube, ArrowUpRight } from "lucide-react";
-import { ALL_BRANCHES } from "@/constants/branches";
+import { Instagram, Linkedin, Mail, MapPin, MessageCircle, Youtube } from "lucide-react";
 import { WHATSAPP_COMMUNITY_URL } from "./SiteNav";
 
 const TelegramIcon = () => (
@@ -21,104 +20,103 @@ const SOCIALS = [
   { label: "YouTube", href: "https://www.youtube.com/@DigiDiploma", icon: <Youtube className="h-5 w-5" /> },
 ];
 
-const EXPLORE = [
-  { label: "Home", to: "/" },
-  { label: "Materials", to: "/materials" },
-  { label: "Projects", to: "/projects" },
-  { label: "VVIMP Store", to: "/vvimp-store" },
-  { label: "Exam Timetable", to: "/exam-timetable" },
-  { label: "Internship", to: "/internship" },
-  { label: "About Us", to: "/about" },
-  { label: "Contact", to: "/contact" },
+const COLUMNS = [
+  {
+    title: "Company",
+    links: [
+      { label: "About Us", to: "/about" },
+      { label: "Internship", to: "/internship" },
+      { label: "Contact", to: "/contact" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { label: "Study Materials", to: "/materials" },
+      { label: "VVIMP Store", to: "/vvimp-store" },
+      { label: "Exam Timetable", to: "/exam-timetable" },
+      { label: "Free Projects", to: "/projects" },
+    ],
+  },
+  {
+    title: "Support",
+    links: [
+      { label: "Help & Contact", to: "/contact" },
+      { label: "Privacy Policy", to: "/privacy" },
+      { label: "Terms of Service", to: "/terms" },
+      { label: "Cookie Policy", to: "/cookies" },
+    ],
+  },
 ];
 
 const SiteFooter = () => (
-  <footer className="relative border-t border-white/10 bg-[#07070d]">
-
-    <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8">
-      <div className="grid gap-12 md:grid-cols-12">
+  <footer className="dd-footer">
+    <div className="dd-container py-14 sm:py-16">
+      <div className="grid gap-10 md:grid-cols-12">
         <div className="md:col-span-5">
-          <div className="mb-5 flex items-center gap-3">
-            <img src="/icons/android-chrome-512x512.png" alt="DigiDiploma logo" className="h-12 w-12 rounded-2xl object-contain" />
-            <div>
-              <div className="dd-display text-3xl text-white">DigiDiploma</div>
-              <div className="dd-eyebrow mt-1">Revolutionizing Digital Education</div>
-            </div>
+          <div className="flex items-center gap-2.5">
+            <img src="/icons/android-chrome-512x512.png" alt="" className="h-10 w-10 rounded-lg object-contain" />
+            <span className="text-2xl font-extrabold text-white" style={{ fontFamily: '"Schibsted Grotesk", sans-serif' }}>
+              DigiDiploma<span style={{ color: "#60a5fa" }}>.</span>
+            </span>
           </div>
-          <p className="max-w-md leading-relaxed text-[var(--dd-mute)]">
+          <p className="mt-4 max-w-sm leading-relaxed">
             Empowering diploma students with comprehensive study materials, project management, and interactive
             learning resources.
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            {SOCIALS.map((s) => (
-              <a
-                key={s.label}
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={s.label}
-                aria-label={s.label}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white transition-all duration-300 hover:-translate-y-1 hover:border-[var(--dd-lime)] hover:bg-[var(--dd-lime)] hover:text-[var(--dd-ink)]"
-              >
-                {s.icon}
-              </a>
-            ))}
-          </div>
-        </div>
-
-        <div className="md:col-span-3">
-          <h4 className="dd-eyebrow mb-5">Explore</h4>
-          <ul className="space-y-3">
-            {EXPLORE.map((l) => (
-              <li key={l.to}>
-                <Link
-                  to={l.to}
-                  className="group inline-flex items-center gap-1 text-[var(--dd-mute)] transition-colors hover:text-white"
-                >
-                  {l.label}
-                  <ArrowUpRight className="h-3.5 w-3.5 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
-                </Link>
-              </li>
-            ))}
+          <ul className="mt-5 space-y-2 text-sm">
+            <li className="flex items-center gap-2">
+              <Mail className="h-4 w-4" />
+              <Link to="/contact">Contact our team</Link>
+            </li>
+            <li className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              Pune, Maharashtra, India
+            </li>
           </ul>
         </div>
 
-        <div className="md:col-span-4">
-          <h4 className="dd-eyebrow mb-5">Branches</h4>
-          <ul className="space-y-3">
-            {ALL_BRANCHES.map((branch) => (
-              <li key={branch}>
-                <Link
-                  to={`/materials?branch=${encodeURIComponent(branch)}`}
-                  className="text-[var(--dd-mute)] transition-colors hover:text-white"
-                >
-                  {branch}
-                </Link>
-              </li>
-            ))}
-          </ul>
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 md:col-span-7">
+          {COLUMNS.map((col) => (
+            <div key={col.title}>
+              <div className="dd-footer-title">{col.title}</div>
+              <ul className="space-y-2.5 text-sm">
+                {col.links.map((l) => (
+                  <li key={l.label}>
+                    <Link to={l.to}>{l.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="mt-14 flex flex-col items-center justify-between gap-5 border-t border-white/10 pt-8 md:flex-row">
-        <div className="text-center md:text-left">
-          <p className="text-sm text-[var(--dd-mute)]">&copy; {new Date().getFullYear()} DigiDiploma. All rights reserved.</p>
-          <p className="mt-1 text-xs text-white/40">
+      <div className="mt-12 flex flex-col items-center justify-between gap-5 border-t border-white/10 pt-7 md:flex-row">
+        <div className="text-center text-sm md:text-left">
+          <p>&copy; {new Date().getFullYear()} DigiDiploma. All rights reserved.</p>
+          <p className="mt-1 text-xs text-slate-500">
             Designed and Developed by{" "}
-            <a
-              href="https://github.com/Onkar3333/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-[var(--dd-violet-2)] hover:underline"
-            >
+            <a href="https://github.com/Onkar3333/" target="_blank" rel="noopener noreferrer">
               Onkar Bansode
             </a>
           </p>
         </div>
-        <div className="flex items-center gap-6 text-sm">
-          <Link to="/privacy" className="text-[var(--dd-mute)] hover:text-white">Privacy Policy</Link>
-          <Link to="/terms" className="text-[var(--dd-mute)] hover:text-white">Terms of Service</Link>
-          <Link to="/cookies" className="text-[var(--dd-mute)] hover:text-white">Cookie Policy</Link>
+        <div className="flex items-center gap-2">
+          <span className="mr-2 text-sm">Follow us</span>
+          {SOCIALS.map((s) => (
+            <a
+              key={s.label}
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={s.label}
+              aria-label={s.label}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-[var(--dd-blue)]"
+            >
+              {s.icon}
+            </a>
+          ))}
         </div>
       </div>
     </div>

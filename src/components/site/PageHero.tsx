@@ -1,10 +1,9 @@
 import type { ReactNode } from "react";
 import SiteNav from "./SiteNav";
-import { Reveal, SplitWords } from "./motion";
 
 /**
- * Shared top of every public page: the site nav plus an animated title band.
- * Pass `children` for extra controls (buttons, search) under the subtitle.
+ * Shared top of a public page: the site nav plus a clean title band.
+ * Pass `children` for extra controls (buttons) under the subtitle.
  */
 const PageHero = ({
   eyebrow,
@@ -16,7 +15,7 @@ const PageHero = ({
 }: {
   eyebrow?: string;
   title: string;
-  /** Optional trailing words rendered in the violet-to-lime gradient */
+  /** Optional trailing words shown in the brand blue */
   accent?: string;
   subtitle?: ReactNode;
   children?: ReactNode;
@@ -24,48 +23,21 @@ const PageHero = ({
 }) => (
   <>
     <SiteNav />
-    <header className={`dd dd-noise relative !min-h-0 overflow-hidden ${compact ? "pb-10 pt-28" : "pb-14 pt-32 sm:pb-20 sm:pt-40"}`}>
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <div className="dd-blob dd-blob-a" />
-        <div className="dd-blob dd-blob-b" />
-        <div className="dd-grid-bg absolute inset-0" />
-      </div>
-      <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-8">
-        {eyebrow ? (
-          <Reveal y={16}>
-            <div className="dd-eyebrow mb-4">{eyebrow}</div>
-          </Reveal>
-        ) : null}
-        <h1 className={`dd-display text-white ${compact ? "text-4xl sm:text-6xl" : "text-5xl sm:text-7xl"}`}>
-          <SplitWords text={title} />
-          {accent ? (
-            <>
-              {" "}
-              <SplitWords text={accent} delay={0.15} wordClassName={() => "dd-grad-text"} />
-            </>
-          ) : null}
+    <header className={`dd dd-soft border-b border-[var(--dd-line)] ${compact ? "py-10" : "py-14 sm:py-20"}`}>
+      <div className="dd-container">
+        {eyebrow ? <div className="dd-eyebrow mb-4">{eyebrow}</div> : null}
+        <h1 className="dd-h2">
+          {title}
+          {accent ? <span className="dd-accent"> {accent}</span> : null}
         </h1>
-        {subtitle ? (
-          <Reveal delay={0.15} y={20}>
-            <div className="mt-5 max-w-2xl text-lg text-[var(--dd-mute)]">{subtitle}</div>
-          </Reveal>
-        ) : null}
-        {children ? (
-          <Reveal delay={0.25} y={20}>
-            <div className="mt-7">{children}</div>
-          </Reveal>
-        ) : null}
+        {subtitle ? <div className="dd-lead mt-3 max-w-2xl">{subtitle}</div> : null}
+        {children ? <div className="mt-6">{children}</div> : null}
       </div>
     </header>
   </>
 );
 
-/** Nav only, with the spacing a fixed nav needs. For pages that keep their own hero. */
-export const SiteNavSpacer = () => (
-  <>
-    <SiteNav />
-    <div className="h-20" aria-hidden />
-  </>
-);
+/** Nav only, for pages that keep their own hero. (The nav is sticky, so no spacer is needed.) */
+export const SiteNavSpacer = () => <SiteNav />;
 
 export default PageHero;
